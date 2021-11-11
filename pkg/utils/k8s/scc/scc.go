@@ -19,7 +19,7 @@ func CheckIfAquaSecurityContextConstraintsExists(v1Client security1.SecurityV1Cl
 }
 
 // CreateAquaSecurityContextConstraints create aqua-scc
-func CreateAquaSecurityContextConstraints(v1Client security1.SecurityV1Client) *v1.SecurityContextConstraints {
+func CreateAquaSecurityContextConstraints() *v1.SecurityContextConstraints {
 
 	bool := true
 	capabilities := []corev1.Capability{
@@ -74,7 +74,7 @@ func CreateAquaSecurityContextConstraints(v1Client security1.SecurityV1Client) *
 		AllowedUnsafeSysctls:   nil,
 		ForbiddenSysctls:       nil,
 	}
-
-	create, _ := v1Client.SecurityContextConstraints().Create(&constraints)
-	return create
+	client := security1.SecurityV1Client{}
+	contextConstraints, _ := client.SecurityContextConstraints().Create(&constraints)
+	return contextConstraints
 }

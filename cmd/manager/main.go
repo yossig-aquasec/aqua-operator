@@ -8,7 +8,6 @@ import (
 	"github.com/aquasecurity/aqua-operator/pkg/controller/ocp"
 	"github.com/aquasecurity/aqua-operator/pkg/utils/extra"
 	"github.com/aquasecurity/aqua-operator/pkg/utils/k8s/scc"
-	security1 "github.com/openshift/client-go/security/clientset/versioned/typed/security/v1"
 	"os"
 	"runtime"
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -45,6 +44,7 @@ var log = logf.Log.WithName("cmd")
 
 func printVersion() {
 	log.Info(fmt.Sprintf("Operator Version: %s", version.Version))
+
 	log.Info(fmt.Sprintf("Go Version: %s", runtime.Version()))
 	log.Info(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
 	log.Info(fmt.Sprintf("Version of operator-sdk: %v", sdkVersion.Version))
@@ -114,10 +114,12 @@ func main() {
 			log.Error(err, "")
 			os.Exit(1)
 		}
-		v1Client := security1.SecurityV1Client{}
-		if !scc.CheckIfAquaSecurityContextConstraintsExists(v1Client) {
-			scc.CreateAquaSecurityContextConstraints(v1Client)
-		}
+
+		//if !scc.CheckIfAquaSecurityContextConstraintsExists(v1Client) {
+		//	scc.CreateAquaSecurityContextConstraints(v1Client)
+		//}
+
+		scc.CreateAquaSecurityContextConstraints()
 	}
 
 	// Setup all Controllers
@@ -192,7 +194,8 @@ func serveCRMetrics(cfg *rest.Config) error {
 	// To generate metrics in other namespaces, add the values below.
 	ns := []string{operatorNs}
 	// Generate and serve custom resource specific metrics.
-	err = kubemetrics.GenerateAndServeCRMetrics(cfg, ns, filteredGVK, metricsHost, operatorMetricsPort)
+	err = kubemetrics.GenerateAnd
+	ServeCRMetrics(cfg, ns, filteredGVK, metricsHost, operatorMetricsPort)
 	if err != nil {
 		return err
 	}
