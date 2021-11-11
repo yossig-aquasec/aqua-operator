@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/aquasecurity/aqua-operator/pkg/controller/ocp"
 	"github.com/aquasecurity/aqua-operator/pkg/utils/extra"
+	"github.com/aquasecurity/aqua-operator/pkg/utils/k8s/scc"
+	security1 "github.com/openshift/client-go/security/clientset/versioned/typed/security/v1"
 	"os"
 	"runtime"
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -111,6 +113,10 @@ func main() {
 		if err := routev1.AddToScheme(mgr.GetScheme()); err != nil {
 			log.Error(err, "")
 			os.Exit(1)
+		}
+		v1Client := security1.SecurityV1Client{}
+		if !scc.CheckIfAquaSecurityContextConstraintsExists(v1Client) {
+			scc.CreateAquaSecurityContextConstraints(v1Client)
 		}
 	}
 
