@@ -1,6 +1,7 @@
 package scc
 
 import (
+	"fmt"
 	v1 "github.com/openshift/api/security/v1"
 	security1 "github.com/openshift/client-go/security/clientset/versioned/typed/security/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -75,6 +76,11 @@ func CreateAquaSecurityContextConstraints() *v1.SecurityContextConstraints {
 		ForbiddenSysctls:       nil,
 	}
 	client := security1.SecurityV1Client{}
-	contextConstraints, _ := client.SecurityContextConstraints().Create(&constraints)
+	contextConstraints, err := client.SecurityContextConstraints().Create(&constraints)
+
+	if err != nil {
+		fmt.Printf(err.Error())
+		return nil
+	}
 	return contextConstraints
 }

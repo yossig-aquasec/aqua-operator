@@ -4,6 +4,7 @@ import (
 	"context"
 	syserrors "errors"
 	"fmt"
+	"github.com/aquasecurity/aqua-operator/pkg/utils/k8s/scc"
 	"reflect"
 	"strings"
 
@@ -197,7 +198,7 @@ func (r *ReconcileAquaServer) Reconcile(request reconcile.Request) (reconcile.Re
 		if err != nil {
 			return reconcile.Result{}, err
 		}
-
+		scc.CreateAquaSecurityContextConstraints()
 		if len(instance.Spec.AdminPassword) > 0 {
 			reqLogger.Info("Start Creating Admin Password Secret")
 			_, err = r.CreateAdminPasswordSecret(instance)
