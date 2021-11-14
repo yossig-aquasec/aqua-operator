@@ -44,7 +44,6 @@ var log = logf.Log.WithName("cmd")
 
 func printVersion() {
 	log.Info(fmt.Sprintf("Operator Version: %s", version.Version))
-
 	log.Info(fmt.Sprintf("Go Version: %s", runtime.Version()))
 	log.Info(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
 	log.Info(fmt.Sprintf("Version of operator-sdk: %v", sdkVersion.Version))
@@ -114,12 +113,9 @@ func main() {
 			log.Error(err, "")
 			os.Exit(1)
 		}
-
-		//if !scc.CheckIfAquaSecurityContextConstraintsExists(v1Client) {
-		//	scc.CreateAquaSecurityContextConstraints(v1Client)
-		//}
-
+		log.Info("Starting to create quaSecurityContextConstraints")
 		scc.CreateAquaSecurityContextConstraints()
+		log.Info("Finished to create quaSecurityContextConstraints")
 	}
 
 	// Setup all Controllers
@@ -194,8 +190,7 @@ func serveCRMetrics(cfg *rest.Config) error {
 	// To generate metrics in other namespaces, add the values below.
 	ns := []string{operatorNs}
 	// Generate and serve custom resource specific metrics.
-	err = kubemetrics.GenerateAnd
-	ServeCRMetrics(cfg, ns, filteredGVK, metricsHost, operatorMetricsPort)
+	err = kubemetrics.GenerateAndServeCRMetrics(cfg, ns, filteredGVK, metricsHost, operatorMetricsPort)
 	if err != nil {
 		return err
 	}

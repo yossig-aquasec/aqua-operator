@@ -1,11 +1,12 @@
 package scc
 
 import (
+	"fmt"
 	v1 "github.com/openshift/api/security/v1"
 	security1 "github.com/openshift/client-go/security/clientset/versioned/typed/security/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 // CheckIfAquaSecurityContextConstraintsExists Check if aqua-scc exists
@@ -74,7 +75,32 @@ func CreateAquaSecurityContextConstraints() *v1.SecurityContextConstraints {
 		AllowedUnsafeSysctls:   nil,
 		ForbiddenSysctls:       nil,
 	}
-	client := security1.SecurityV1Client{}
-	contextConstraints, _ := client.SecurityContextConstraints().Create(&constraints)
+
+	kubeconfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		clientcmd.NewDefaultClientConfigLoadingRules(),
+		&clientcmd.ConfigOverrides{},
+	)
+	restconfig, err := kubeconfig.ClientConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	config, err := security1.NewForConfig(restconfig)
+	if err != nil {
+		panic(err)
+	}
+	contextConstraints, err := config.SecurityContextConstraints().Create(&constraints)
+	//restClient := config.RESTClient()
+
+	//security1.SecurityV1Client{}
+	//security1.SecurityContextConstraintsInterface().Create(&constraints)
+	//security1.NewForConfig()
+	//client := security1.SecurityV1Client{}.RESTClient()
+	//contextConstraints, err := client.SecurityContextConstraints().Create(&constraints)
+
+	if err != nil {
+		fmt.Printf(err.Error())
+		return nil
+	}
 	return contextConstraints
 }
