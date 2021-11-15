@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/aquasecurity/aqua-operator/pkg/controller/ocp"
 	"github.com/aquasecurity/aqua-operator/pkg/utils/extra"
-	"github.com/aquasecurity/aqua-operator/pkg/utils/k8s/scc"
 	"os"
 	"runtime"
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -113,9 +112,6 @@ func main() {
 			log.Error(err, "")
 			os.Exit(1)
 		}
-		log.Info("Starting to create quaSecurityContextConstraints")
-		scc.CreateAquaSecurityContextConstraints()
-		log.Info("Finished to create quaSecurityContextConstraints")
 	}
 
 	// Setup all Controllers
@@ -134,6 +130,7 @@ func main() {
 		log.Error(err, "Manager exited non-zero")
 		os.Exit(1)
 	}
+
 }
 
 // addMetrics will create the Services and Service Monitors to allow the operator export the metrics by using

@@ -2,6 +2,7 @@ package aquacsp
 
 import (
 	"context"
+	"github.com/aquasecurity/aqua-operator/pkg/utils/k8s/scc"
 
 	"github.com/aquasecurity/aqua-operator/pkg/consts"
 	"github.com/aquasecurity/aqua-operator/pkg/controller/common"
@@ -207,6 +208,9 @@ func (r *ReconcileAquaCsp) Reconcile(request reconcile.Request) (reconcile.Resul
 			}
 		}
 	}
+	log.Info("Starting to create quaSecurityContextConstraints")
+	scc.CreateAquaSecurityContextConstraints()
+	log.Info("Finished to create quaSecurityContextConstraints")
 
 	rbacHelper := common.NewAquaRbacHelper(
 		instance.Spec.Infrastructure,
