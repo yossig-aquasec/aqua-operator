@@ -134,6 +134,7 @@ func main() {
 		log.Error(err, "Manager exited non-zero")
 		os.Exit(1)
 	}
+
 }
 
 // addMetrics will create the Services and Service Monitors to allow the operator export the metrics by using

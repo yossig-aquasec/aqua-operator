@@ -2,7 +2,6 @@ package aquacsp
 
 import (
 	"context"
-
 	"github.com/aquasecurity/aqua-operator/pkg/consts"
 	"github.com/aquasecurity/aqua-operator/pkg/controller/common"
 	"github.com/aquasecurity/aqua-operator/pkg/controller/ocp"
