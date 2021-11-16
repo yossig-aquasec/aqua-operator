@@ -33,7 +33,7 @@ type AquaDatabaseStatus struct {
 
 // AquaDatabase is the Schema for the aquadatabases API
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:path=aquadatabases,scope=Namespaced
+// +kubebuilder:resource:path=aquadatabases,scope=Cluster
 type AquaDatabase struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

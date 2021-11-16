@@ -34,7 +34,7 @@ type AquaKubeEnforcerStatus struct {
 
 // AquaKubeEnforcer is the Schema for the aquakubeenforcers API
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:path=aquakubeenforcers,scope=Namespaced
+// +kubebuilder:resource:path=aquakubeenforcers,scope=Cluster
 type AquaKubeEnforcer struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

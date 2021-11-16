@@ -33,7 +33,7 @@ type AquaScannerStatus struct {
 
 // AquaScanner is the Schema for the aquascanners API
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:path=aquascanners,scope=Namespaced
+// +kubebuilder:resource:path=aquascanners,scope=Cluster
 type AquaScanner struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

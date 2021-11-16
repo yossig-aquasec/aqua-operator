@@ -37,7 +37,7 @@ type AquaGatewayStatus struct {
 
 // AquaGateway is the Schema for the aquagateways API
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:path=aquagateways,scope=Namespaced
+// +kubebuilder:resource:path=aquagateways,scope=Cluster
 type AquaGateway struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

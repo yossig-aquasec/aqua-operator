@@ -31,7 +31,7 @@ type AquaCspSpec struct {
 	RunAsNonRoot           bool                     `json:"runAsNonRoot,omitempty"`
 	ServerEnvs             []corev1.EnvVar          `json:"serverEnvs,required"`
 	GatewayEnvs            []corev1.EnvVar          `json:"gatewayEnvs,required"`
-	DeployKubeEnforcer     *AquaKubeEnforcerDetails `json:"kubeEnforcer",omitempty`
+	DeployKubeEnforcer     *AquaKubeEnforcerDetails `json:"kubeEnforcer,omitempty"`
 	EnforcerUpdateApproved *bool                    `json:"updateEnforcer, omitempty"`
 }
 
@@ -48,7 +48,7 @@ type AquaCspStatus struct {
 
 // AquaCsp is the Schema for the aquacsps API
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:path=aquacsps,scope=Namespaced
+// +kubebuilder:resource:path=aquacsps,scope=Cluster
 type AquaCsp struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

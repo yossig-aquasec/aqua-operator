@@ -40,7 +40,7 @@ type AquaServerStatus struct {
 
 // AquaServer is the Schema for the aquaservers API
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:path=aquaservers,scope=Namespaced
+// +kubebuilder:resource:path=aquaservers,scope=Cluster
 type AquaServer struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
