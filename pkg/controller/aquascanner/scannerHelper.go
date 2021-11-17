@@ -51,6 +51,7 @@ func (as *AquaScannerHelper) newDeployment(cr *operatorv1alpha1.AquaScanner) *ap
 	privileged := true
 
 	if cr.Spec.RunAsNonRoot {
+		log.Info("RunAsNoneRoot")
 		privileged = false
 	}
 

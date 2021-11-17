@@ -60,6 +60,7 @@ func (sr *AquaServerHelper) newDeployment(cr *operatorv1alpha1.AquaServer) *apps
 	privileged := true
 
 	if cr.Spec.RunAsNonRoot {
+		log.Info("RunAsNoneRoot")
 		privileged = false
 	}
 
