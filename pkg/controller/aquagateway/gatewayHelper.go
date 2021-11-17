@@ -59,6 +59,7 @@ func (gw *AquaGatewayHelper) newDeployment(cr *operatorv1alpha1.AquaGateway) *ap
 	privileged := true
 
 	if cr.Spec.RunAsNonRoot {
+		log.Info("RunAsNoneRoot")
 		privileged = false
 	}
 

@@ -58,8 +58,9 @@ func (db *AquaDatabaseHelper) newDeployment(cr *operatorv1alpha1.AquaDatabase, d
 
 	marketplace := extra.IsMarketPlace()
 	privileged := true
-
+	log.Info(fmt.Sprintf("%t", cr.Spec.RunAsNonRoot))
 	if cr.Spec.RunAsNonRoot {
+		log.Info("RunAsNoneRoot")
 		privileged = false
 	}
 
