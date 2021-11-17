@@ -85,6 +85,7 @@ func (enf *AquaEnforcerHelper) CreateDaemonSet(cr *operatorv1alpha1.AquaEnforcer
 	privileged := true
 
 	if cr.Spec.RunAsNonRoot {
+		log.Info("RunAsNoneRoot")
 		privileged = false
 	}
 
