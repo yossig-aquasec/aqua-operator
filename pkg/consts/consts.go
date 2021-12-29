@@ -46,6 +46,9 @@ const (
 	// AquaKubeEnforcerSAClusterReaderRoleBind is Openshift cluster role binding between aqua-kube-enforcer-sa and ClusterReaderRole
 	AquaKubeEnforcerSAClusterReaderRoleBind = "aqua-kube-enforcer-sa-cluster-reader-crb"
 
+	// AquaStarboardSAClusterReaderRoleBind is Openshift cluster role binding between aqua-starboard-sa and ClusterReaderRole
+	AquaStarboardSAClusterReaderRoleBind = "aqua-starboard-sa-cluster-reader-crb"
+
 	// ScalockDbPasswordSecretKey Scalock DB Password Secret Key
 	ScalockDbPasswordSecretKey = "password"
 
@@ -112,4 +115,22 @@ const (
 	MtlsAquaEnforcerSecretName = "aqua-grpc-enforcer"
 
 	MtlsAquaKubeEnforcerSecretName = "aqua-grpc-kube-enforcer"
+
+	OperatorLogDevMode = "false"
+
+	OperatorConcurrentScanJobsLimit = "10"
+
+	OperatorScanJobRetryAfter = "30s"
+
+	OperatorMetricsBindAddress = ":8080"
+
+	OperatorHealthProbeBindAddress = ":9090"
+
+	OperatorCisKubernetesBenchmarkEnabled = "false"
+
+	OperatorVulnerabilityScannerEnabled = "false"
+
+	OperatorBatchDeleteLimit = "10"
+
+	OperatorBatchDeleteDelay = "10s"
 )

@@ -1,20 +1,20 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: aquaservers.operator.aquasec.com
+  name: aquaStarboards.operator.aquasec.com
 spec:
   group: operator.aquasec.com
   names:
-    kind: AquaServer
-    listKind: AquaServerList
-    plural: aquaservers
-    singular: aquaserver
+    kind: AquaStarboard
+    listKind: AquaStarboardList
+    plural: aquaStarboards
+    singular: aquastarboard
   scope: Namespaced
   subresources:
     status: {}
   validation:
     openAPIV3Schema:
-      description: AquaServer is the Schema for the aquaservers API
+      description: AquaStarboard is the Schema for the aquaStarboards API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
@@ -29,88 +29,22 @@ spec:
         metadata:
           type: object
         spec:
-          description: AquaServerSpec defines the desired state of AquaServer
+          description: AquaStarboardSpec defines the desired state of AquaStarboard
           properties:
-            adminPassword:
+            allowAnyVersion:
+              type: boolean
+            batchDeleteDelay:
               type: string
-            auditDB:
+            batchDeleteLimit:
+              type: string
+            cisKubernetesBenchmarkEnabled:
+              type: string
+            concurrentScanJobsLimit:
+              type: string
+            config:
               properties:
-                information:
-                  properties:
-                    host:
-                      type: string
-                    password:
-                      type: string
-                    port:
-                      format: int64
-                      type: integer
-                    username:
-                      type: string
-                  required:
-                  - host
-                  - password
-                  - port
-                  - username
-                  type: object
-                secret:
-                  properties:
-                    key:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - key
-                  - name
-                  type: object
-              type: object
-            common:
-              properties:
-                activeActive:
-                  type: boolean
-                adminPassword:
-                  properties:
-                    key:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - key
-                  - name
-                  type: object
-                allowAnyVersion:
-                  type: boolean
-                cybercenterAddress:
-                  type: string
-                databaseSecret:
-                  properties:
-                    key:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - key
-                  - name
-                  type: object
-                dbDiskSize:
-                  type: integer
                 imagePullSecret:
                   type: string
-                license:
-                  properties:
-                    key:
-                      type: string
-                    name:
-                      type: string
-                  required:
-                  - key
-                  - name
-                  type: object
-                splitDB:
-                  type: boolean
-                storageclass:
-                  type: string
-              required:
-              - activeActive
               type: object
             deploy:
               description: AquaService Struct for deployment spec
@@ -2280,19 +2214,6 @@ spec:
               required:
               - replicas
               type: object
-            enforcer:
-              properties:
-                enforceMode:
-                  type: boolean
-                gateway:
-                  type: string
-                name:
-                  type: string
-              required:
-              - enforceMode
-              - gateway
-              - name
-              type: object
             env:
               items:
                 description: EnvVar represents an environment variable present in
@@ -2390,22 +2311,23 @@ spec:
                 - name
                 type: object
               type: array
-            externalDb:
+            healthProbeBindAddress:
+              type: string
+            image:
               properties:
-                host:
+                pullPolicy:
                   type: string
-                password:
+                registry:
                   type: string
-                port:
-                  format: int64
-                  type: integer
-                username:
+                repository:
+                  type: string
+                tag:
                   type: string
               required:
-              - host
-              - password
-              - port
-              - username
+              - pullPolicy
+              - registry
+              - repository
+              - tag
               type: object
             infra:
               description: 'INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
@@ -2426,22 +2348,37 @@ spec:
               required:
               - requirements
               type: object
-            licenseToken:
+            logDevMode:
+              type: boolean
+            metricsBindAddress:
               type: string
-            mtls:
-              type: boolean
-            route:
-              type: boolean
-            runAsNonRoot:
-              type: boolean
+            registry:
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                url:
+                  type: string
+                username:
+                  type: string
+              required:
+              - email
+              - password
+              - url
+              - username
+              type: object
+            scanJobRetryAfter:
+              type: string
+            vulnerabilityScannerEnabled:
+              type: string
           required:
-          - common
+          - config
           - deploy
-          - env
           - infra
           type: object
         status:
-          description: AquaServerStatus defines the observed state of AquaServer
+          description: AquaStarboardStatus defines the observed state of AquaStarboard
           properties:
             nodes:
               description: 'INSERT ADDITIONAL STATUS FIELD - define observed state

@@ -130,6 +130,15 @@ type AquaKubeEnforcerDetails struct {
 	Registry string `json:"registry,omitempty"`
 }
 
+type AquaStarboardConfig struct {
+	ImagePullSecret string `json:"imagePullSecret,omitempty"`
+}
+
+type AquaStarboardDetails struct {
+	ImageTag string `json:"tag,omitempty"`
+	Registry string `json:"registry,omitempty"`
+}
+
 type AuditDBInformation struct {
 	AuditDBSecret *AquaSecret              `json:"secret,omitempty"`
 	Data          *AquaDatabaseInformation `json:"information,omitempty"`

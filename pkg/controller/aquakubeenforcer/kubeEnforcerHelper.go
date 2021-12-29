@@ -709,5 +709,19 @@ func (ebf *AquaKubeEnforcerHelper) getEnvVars(cr *operatorv1alpha1.AquaKubeEnfor
 		result = append(result, mtlsKubeEnforcerEnv...)
 	}
 
+	if cr.Spec.Starboard {
+		starboardKubeEnforcerEnv := []corev1.EnvVar{
+			{
+				Name:  "AQUA_KAP_ADD_ALL_CONTROL",
+				Value: "true",
+			},
+			{
+				Name:  "AQUA_WATCH_CONFIG_AUDIT_REPORT",
+				Value: "true",
+			},
+		}
+		result = append(result, starboardKubeEnforcerEnv...)
+	}
+
 	return result
 }
