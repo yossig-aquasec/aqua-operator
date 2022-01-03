@@ -154,7 +154,7 @@ func (enf *AquaStarboardHelper) CreateStarboardClusterRole(name string, namespac
 		},
 		{
 			APIGroups: []string{
-				"operator.aquasec.com",
+				"aquasecurity.github.io",
 			},
 			Resources: []string{
 				"vulnerabilityreports", "configauditreports", "clusterconfigauditreports", "ciskubebenchreports",

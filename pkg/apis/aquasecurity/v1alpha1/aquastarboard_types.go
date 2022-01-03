@@ -1,7 +1,7 @@
 package v1alpha1
 
 import (
-	"github.com/aquasecurity/aqua-operator/pkg/apis/operator/v1alpha1"
+	v1alpha1 "github.com/aquasecurity/aqua-operator/pkg/apis/operator/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -14,7 +14,7 @@ type AquaStarboardSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	Infrastructure                *v1alpha1.AquaInfrastructure `json:"infra"`
+	Infrastructure                *v1alpha1.AquaInfrastructure `json:"infra,omitempty"`
 	AllowAnyVersion               bool                         `json:"allowAnyVersion,omitempty"`
 	StarboardService              *v1alpha1.AquaService        `json:"deploy,required"`
 	Config                        v1alpha1.AquaStarboardConfig `json:"config"`
@@ -64,5 +64,5 @@ type AquaStarboardList struct {
 }
 
 func init() {
-	v1alpha1.SchemeBuilder.Register(&AquaStarboard{}, &AquaStarboardList{})
+	SchemeBuilder.Register(&AquaStarboard{}, &AquaStarboardList{})
 }
