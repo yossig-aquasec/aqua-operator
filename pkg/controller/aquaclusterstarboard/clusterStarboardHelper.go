@@ -1,4 +1,4 @@
-package ConfigAuditReports
+package aquaclusterstarboard
 
 import (
 	"fmt"
@@ -20,27 +20,27 @@ const (
 	WebhookTimeout int32 = 5
 )
 
-// StarboardParameters :
-type StarboardParameters struct {
-	Starboard *v1alpha1.ConfigAuditReports
+// ClusterStarboardParameters :
+type ClusterStarboardParameters struct {
+	ClusterStarboard *v1alpha1.ClusterConfigAuditReports
 }
 
-// ConfigAuditReportsHelper :
-type ConfigAuditReportsHelper struct {
-	Parameters StarboardParameters
+// ClusterConfigAuditReportsHelper :
+type ClusterConfigAuditReportsHelper struct {
+	Parameters ClusterStarboardParameters
 }
 
-func newConfigAuditReportsHelper(cr *v1alpha1.ConfigAuditReports) *ConfigAuditReportsHelper {
-	params := StarboardParameters{
-		Starboard: cr,
+func newAquaClusterStarboardHelper(cr *v1alpha1.ClusterConfigAuditReports) *ClusterConfigAuditReportsHelper {
+	params := ClusterStarboardParameters{
+		ClusterStarboard: cr,
 	}
 
-	return &ConfigAuditReportsHelper{
+	return &ClusterConfigAuditReportsHelper{
 		Parameters: params,
 	}
 }
 
-func (enf *ConfigAuditReportsHelper) CreateStarboardClusterRole(name string, namespace string) *rbacv1.ClusterRole {
+func (enf *ClusterConfigAuditReportsHelper) CreateStarboardClusterRole(name string, namespace string) *rbacv1.ClusterRole {
 	rules := []rbacv1.PolicyRule{
 		{
 			APIGroups: []string{
@@ -181,15 +181,15 @@ func (enf *ConfigAuditReportsHelper) CreateStarboardClusterRole(name string, nam
 	return crole
 }
 
-// CreateServiceAccount Create new service account
-func (enf *ConfigAuditReportsHelper) CreateStarboardServiceAccount(cr, namespace, app, name string) *corev1.ServiceAccount {
+// CreateStarboardClusterServiceAccount Create new service account
+func (enf *ClusterConfigAuditReportsHelper) CreateStarboardClusterServiceAccount(cr, namespace, app, name string) *corev1.ServiceAccount {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
 		"aquasecoperator_cr": cr,
 	}
 	annotations := map[string]string{
-		"description": "Service account for aqua starboard",
+		"description": "Service account for aqua cluster starboard",
 	}
 	sa := &corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
@@ -207,7 +207,7 @@ func (enf *ConfigAuditReportsHelper) CreateStarboardServiceAccount(cr, namespace
 	return sa
 }
 
-func (enf *ConfigAuditReportsHelper) CreateClusterRoleBinding(cr, namespace, name, app, sa, clusterrole string) *rbacv1.ClusterRoleBinding {
+func (enf *ClusterConfigAuditReportsHelper) CreateClusterRoleBinding(cr, namespace, name, app, sa, clusterrole string) *rbacv1.ClusterRoleBinding {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -244,14 +244,14 @@ func (enf *ConfigAuditReportsHelper) CreateClusterRoleBinding(cr, namespace, nam
 	return crb
 }
 
-func (enf *ConfigAuditReportsHelper) CreateSbSecret(cr, namespace, name, app string) *corev1.Secret {
+func (enf *ClusterConfigAuditReportsHelper) CreateClusterSbSecret(cr, namespace, name, app string) *corev1.Secret {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
 		"aquasecoperator_cr": cr,
 	}
 	annotations := map[string]string{
-		"description": "Deploy Starboard secret",
+		"description": "Deploy Cluster Starboard secret",
 	}
 	starboardSecret := &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
@@ -269,14 +269,14 @@ func (enf *ConfigAuditReportsHelper) CreateSbSecret(cr, namespace, name, app str
 	return starboardSecret
 }
 
-func (enf *ConfigAuditReportsHelper) CreateStarboardConftestConfigMap(cr, namespace, name, app, version string) *corev1.ConfigMap {
+func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardConftestConfigMap(cr, namespace, name, app, version string) *corev1.ConfigMap {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
 		"aquasecoperator_cr": cr,
 	}
 	annotations := map[string]string{
-		"description": "Deploy Aqua starboard-conftest-config ConfigMap",
+		"description": "Deploy Aqua Cluster starboard-conftest-config ConfigMap",
 	}
 	configMap := &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
@@ -301,14 +301,14 @@ func (enf *ConfigAuditReportsHelper) CreateStarboardConftestConfigMap(cr, namesp
 	return configMap
 }
 
-func (enf *ConfigAuditReportsHelper) CreateStarboardConfigMap(cr, namespace, name, app string) *corev1.ConfigMap {
+func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardConfigMap(cr, namespace, name, app string) *corev1.ConfigMap {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
 		"aquasecoperator_cr": cr,
 	}
 	annotations := map[string]string{
-		"description": "Deploy Aqua starboard ConfigMap",
+		"description": "Deploy Aqua Cluster starboard ConfigMap",
 	}
 	configMap := &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
@@ -329,7 +329,7 @@ func (enf *ConfigAuditReportsHelper) CreateStarboardConfigMap(cr, namespace, nam
 	return configMap
 }
 
-func (enf *ConfigAuditReportsHelper) CreateStarboardDeployment(cr *v1alpha1.ConfigAuditReports, name, app, registry, tag, pullPolicy, repository string) *appsv1.Deployment {
+func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardDeployment(cr *v1alpha1.ClusterConfigAuditReports, name, app, registry, tag, pullPolicy, repository string) *appsv1.Deployment {
 
 	image := os.Getenv("RELATED_IMAGE_STARBOARD")
 	if image == "" {
@@ -342,7 +342,7 @@ func (enf *ConfigAuditReportsHelper) CreateStarboardDeployment(cr *v1alpha1.Conf
 		"aquasecoperator_cr": cr.Name,
 	}
 	annotations := map[string]string{
-		"description": "Deploy Starboard Deployment",
+		"description": "Deploy Cluster Starboard Deployment",
 	}
 
 	privileged := false
@@ -350,7 +350,7 @@ func (enf *ConfigAuditReportsHelper) CreateStarboardDeployment(cr *v1alpha1.Conf
 	readOnlyRootFilesystem := true
 	allowPrivilegeEscalation := false
 
-	envVars := enf.getStarboardEnvVars(cr)
+	envVars := enf.getClusterStarboardEnvVars(cr)
 	selectors := map[string]string{
 		"app": "starboard-operator",
 	}
@@ -453,36 +453,36 @@ func (enf *ConfigAuditReportsHelper) CreateStarboardDeployment(cr *v1alpha1.Conf
 		},
 	}
 
-	StarboardExtraData := enf.Parameters.Starboard.Spec.StarboardService
+	ClusterStarboardExtraData := enf.Parameters.ClusterStarboard.Spec.StarboardService
 
-	if StarboardExtraData.Resources != nil {
-		deployment.Spec.Template.Spec.Containers[0].Resources = *StarboardExtraData.Resources
+	if ClusterStarboardExtraData.Resources != nil {
+		deployment.Spec.Template.Spec.Containers[0].Resources = *ClusterStarboardExtraData.Resources
 	}
 
-	if StarboardExtraData.LivenessProbe != nil {
-		deployment.Spec.Template.Spec.Containers[0].LivenessProbe = StarboardExtraData.LivenessProbe
+	if ClusterStarboardExtraData.LivenessProbe != nil {
+		deployment.Spec.Template.Spec.Containers[0].LivenessProbe = ClusterStarboardExtraData.LivenessProbe
 	}
 
-	if StarboardExtraData.ReadinessProbe != nil {
-		deployment.Spec.Template.Spec.Containers[0].ReadinessProbe = StarboardExtraData.ReadinessProbe
+	if ClusterStarboardExtraData.ReadinessProbe != nil {
+		deployment.Spec.Template.Spec.Containers[0].ReadinessProbe = ClusterStarboardExtraData.ReadinessProbe
 	}
 
-	if StarboardExtraData.VolumeMounts != nil {
-		deployment.Spec.Template.Spec.Containers[0].VolumeMounts = append(deployment.Spec.Template.Spec.Containers[0].VolumeMounts, StarboardExtraData.VolumeMounts...)
+	if ClusterStarboardExtraData.VolumeMounts != nil {
+		deployment.Spec.Template.Spec.Containers[0].VolumeMounts = append(deployment.Spec.Template.Spec.Containers[0].VolumeMounts, ClusterStarboardExtraData.VolumeMounts...)
 	}
 
-	if StarboardExtraData.Volumes != nil {
-		deployment.Spec.Template.Spec.Volumes = append(deployment.Spec.Template.Spec.Volumes, StarboardExtraData.Volumes...)
+	if ClusterStarboardExtraData.Volumes != nil {
+		deployment.Spec.Template.Spec.Volumes = append(deployment.Spec.Template.Spec.Volumes, ClusterStarboardExtraData.Volumes...)
 	}
 
-	if enf.Parameters.Starboard.Spec.Envs != nil {
-		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, enf.Parameters.Starboard.Spec.Envs...)
+	if enf.Parameters.ClusterStarboard.Spec.Envs != nil {
+		deployment.Spec.Template.Spec.Containers[0].Env = append(deployment.Spec.Template.Spec.Containers[0].Env, enf.Parameters.ClusterStarboard.Spec.Envs...)
 	}
 
 	return deployment
 }
 
-func (ebf *ConfigAuditReportsHelper) getStarboardEnvVars(cr *v1alpha1.ConfigAuditReports) []corev1.EnvVar {
+func (enf *ClusterConfigAuditReportsHelper) getClusterStarboardEnvVars(cr *v1alpha1.ClusterConfigAuditReports) []corev1.EnvVar {
 
 	result := []corev1.EnvVar{
 		{

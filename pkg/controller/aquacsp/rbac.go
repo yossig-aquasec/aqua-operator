@@ -38,7 +38,7 @@ package aquacsp
 //	return reconcile.Result{Requeue: true}, nil
 //}
 //
-//func (r *ReconcileAquaCsp) CreateClusterRoleBinding(cr *operatorv1alpha1.AquaCsp) (reconcile.Result, error) {
+//func (r *ReconcileAquaCsp) CreateStarboardClusterRoleBinding(cr *operatorv1alpha1.AquaCsp) (reconcile.Result, error) {
 //	reqLogger := log.WithValues("CSP - RBAC Phase", "Create ClusterRoleBinding")
 //	reqLogger.Info("Start creating ClusterRole")
 //

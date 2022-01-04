@@ -1,7 +1,23 @@
+/*
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/aquasecurity/aqua-operator/pkg/apis/operator/v1alpha1"
+	"github.com/aquasecurity/aqua-operator/pkg/apis/operator/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -9,8 +25,8 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// AquaStarboardSpec defines the desired state of AquaStarboard
-type AquaStarboardSpec struct {
+// ConfigAuditReportsSpec defines the desired state of ConfigAuditReports
+type ConfigAuditReportsSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
@@ -32,8 +48,8 @@ type AquaStarboardSpec struct {
 	BatchDeleteDelay              string                       `json:"batchDeleteDelay,omitempty"`
 }
 
-// AquaStarboardStatus defines the observed state of AquaStarboard
-type AquaStarboardStatus struct {
+// ConfigAuditReportsStatus defines the observed state of ConfigAuditReports
+type ConfigAuditReportsStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
@@ -43,26 +59,26 @@ type AquaStarboardStatus struct {
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// AquaStarboard is the Schema for the aquaStarboards API
+// ConfigAuditReports is the Schema for the configauditreports API
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:path=aquaStarboards,scope=Namespaced
-type AquaStarboard struct {
+// +kubebuilder:resource:path=configauditreports,scope=Namespaced
+type ConfigAuditReports struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   AquaStarboardSpec   `json:"spec,omitempty"`
-	Status AquaStarboardStatus `json:"status,omitempty"`
+	Spec   ConfigAuditReportsSpec   `json:"spec,omitempty"`
+	Status ConfigAuditReportsStatus `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// AquaStarboardList contains a list of AquaStarboard
-type AquaStarboardList struct {
+// ConfigAuditReportsList contains a list of ConfigAuditReports
+type ConfigAuditReportsList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []AquaStarboard `json:"items"`
+	Items           []ConfigAuditReports `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&AquaStarboard{}, &AquaStarboardList{})
+	SchemeBuilder.Register(&ConfigAuditReports{}, &ConfigAuditReportsList{})
 }

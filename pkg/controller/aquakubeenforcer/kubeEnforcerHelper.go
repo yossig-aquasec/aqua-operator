@@ -2,6 +2,7 @@ package aquakubeenforcer
 
 import (
 	"fmt"
+	aquasecurity1alpha1 "github.com/aquasecurity/aqua-operator/pkg/apis/aquasecurity/v1alpha1"
 	"os"
 
 	"github.com/aquasecurity/aqua-operator/pkg/utils/extra"
@@ -355,7 +356,21 @@ func (enf *AquaKubeEnforcerHelper) CreateMutatingWebhook(cr, namespace, name, ap
 	return mutateWebhook
 }
 
-func (enf *AquaKubeEnforcerHelper) CreateKEConfigMap(cr, namespace, name, app, gwAddress, clusterName string) *corev1.ConfigMap {
+func (enf *AquaKubeEnforcerHelper) CreateKEConfigMap(cr, namespace, name, app, gwAddress, clusterName string, starboard bool) *corev1.ConfigMap {
+	configMapData := map[string]string{
+		"AQUA_ENABLE_CACHE":            "yes",
+		"AQUA_CACHE_EXPIRATION_PERIOD": "60",
+		"TLS_SERVER_CERT_FILEPATH":     "/certs/aqua_ke.crt",
+		"TLS_SERVER_KEY_FILEPATH":      "/certs/aqua_ke.key",
+		"AQUA_GATEWAY_SECURE_ADDRESS":  gwAddress,
+		"AQUA_TLS_PORT":                "8443",
+		"CLUSTER_NAME":                 clusterName,
+	}
+	if starboard {
+		configMapData["AQUA_KAP_ADD_ALL_CONTROL"] = "true"
+		configMapData["AQUA_WATCH_CONFIG_AUDIT_REPORT"] = "true"
+	}
+
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -375,15 +390,7 @@ func (enf *AquaKubeEnforcerHelper) CreateKEConfigMap(cr, namespace, name, app, g
 			Labels:      labels,
 			Annotations: annotations,
 		},
-		Data: map[string]string{
-			"AQUA_ENABLE_CACHE":            "yes",
-			"AQUA_CACHE_EXPIRATION_PERIOD": "60",
-			"TLS_SERVER_CERT_FILEPATH":     "/certs/aqua_ke.crt",
-			"TLS_SERVER_KEY_FILEPATH":      "/certs/aqua_ke.key",
-			"AQUA_GATEWAY_SECURE_ADDRESS":  gwAddress,
-			"AQUA_TLS_PORT":                "8443",
-			"CLUSTER_NAME":                 clusterName,
-		},
+		Data: configMapData,
 	}
 
 	return configMap
@@ -709,19 +716,50 @@ func (ebf *AquaKubeEnforcerHelper) getEnvVars(cr *operatorv1alpha1.AquaKubeEnfor
 		result = append(result, mtlsKubeEnforcerEnv...)
 	}
 
-	if cr.Spec.Starboard {
-		starboardKubeEnforcerEnv := []corev1.EnvVar{
-			{
-				Name:  "AQUA_KAP_ADD_ALL_CONTROL",
-				Value: "true",
-			},
-			{
-				Name:  "AQUA_WATCH_CONFIG_AUDIT_REPORT",
-				Value: "true",
-			},
-		}
-		result = append(result, starboardKubeEnforcerEnv...)
+	return result
+}
+
+// Starboard functions
+
+func (ebf *AquaKubeEnforcerHelper) newStarboard(cr *operatorv1alpha1.AquaKubeEnforcer) *aquasecurity1alpha1.ConfigAuditReports {
+	labels := map[string]string{
+		"app":                cr.Name + "-kube-nforcer",
+		"deployedby":         "aqua-operator",
+		"aquasecoperator_cr": cr.Name,
+	}
+	annotations := map[string]string{
+		"description": "Deploy Aqua Starboard",
 	}
 
-	return result
+	aquasb := &aquasecurity1alpha1.ConfigAuditReports{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "aquasecurity.github.io/v1alpha1",
+			Kind:       "ConfigAuditReports",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        cr.Name,
+			Namespace:   cr.Namespace,
+			Labels:      labels,
+			Annotations: annotations,
+		},
+		Spec: aquasecurity1alpha1.ConfigAuditReportsSpec{
+			Infrastructure:                cr.Spec.Infrastructure,
+			AllowAnyVersion:               cr.Spec.AllowAnyVersion,
+			StarboardService:              cr.Spec.DeployStarboard.StarboardService,
+			Config:                        cr.Spec.DeployStarboard.Config,
+			RegistryData:                  cr.Spec.DeployStarboard.RegistryData,
+			ImageData:                     cr.Spec.DeployStarboard.ImageData,
+			Envs:                          cr.Spec.DeployStarboard.Envs,
+			LogDevMode:                    cr.Spec.DeployStarboard.LogDevMode,
+			ConcurrentScanJobsLimit:       cr.Spec.DeployStarboard.ConcurrentScanJobsLimit,
+			ScanJobRetryAfter:             cr.Spec.DeployStarboard.ScanJobRetryAfter,
+			MetricsBindAddress:            cr.Spec.DeployStarboard.MetricsBindAddress,
+			HealthProbeBindAddress:        cr.Spec.DeployStarboard.HealthProbeBindAddress,
+			CisKubernetesBenchmarkEnabled: cr.Spec.DeployStarboard.CisKubernetesBenchmarkEnabled,
+			VulnerabilityScannerEnabled:   cr.Spec.DeployStarboard.VulnerabilityScannerEnabled,
+			BatchDeleteLimit:              cr.Spec.DeployStarboard.BatchDeleteLimit,
+			BatchDeleteDelay:              cr.Spec.DeployStarboard.BatchDeleteLimit,
+		},
+	}
+	return aquasb
 }

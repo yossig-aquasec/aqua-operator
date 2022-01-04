@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"github.com/aquasecurity/aqua-operator/pkg/controller/aquastarboard"
+	"github.com/aquasecurity/aqua-operator/pkg/controller/ConfigAuditReports"
 )
 
 func init() {
 	// AddToManagerFuncs is a list of functions to create controllers and add them to a manager.
-	AddToManagerFuncs = append(AddToManagerFuncs, aquastarboard.Add)
+	AddToManagerFuncs = append(AddToManagerFuncs, ConfigAuditReports.Add)
 }
