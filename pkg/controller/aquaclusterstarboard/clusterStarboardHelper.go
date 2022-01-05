@@ -157,7 +157,7 @@ func (enf *ClusterConfigAuditReportHelper) CreateStarboardClusterRole(name strin
 				"aquasecurity.github.io",
 			},
 			Resources: []string{
-				"vulnerabilityreports", "configauditreports", "ClusterConfigAuditReport", "ciskubebenchreports",
+				"vulnerabilityreports", "configauditreports", "clusterconfigauditreports", "ciskubebenchreports",
 			},
 			Verbs: []string{
 				"get", "list", "watch", "create", "update", "delete",
