@@ -432,7 +432,7 @@ func (r *ReconcileAquaKubeEnforcer) Reconcile(request reconcile.Request) (reconc
 	}
 
 	if instance.Spec.DeployStarboard != nil {
-		r.installConfigAuditReports(instance)
+		r.installConfigAuditReport(instance)
 	}
 
 	return reconcile.Result{Requeue: true}, nil
@@ -1030,7 +1030,7 @@ func (r *ReconcileAquaKubeEnforcer) updateKubeEnforcerServerObject(serviceObject
 
 // Starboard functions
 
-func (r *ReconcileAquaKubeEnforcer) installConfigAuditReports(cr *operatorv1alpha1.AquaKubeEnforcer) (reconcile.Result, error) {
+func (r *ReconcileAquaKubeEnforcer) installConfigAuditReport(cr *operatorv1alpha1.AquaKubeEnforcer) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Kube-enforcer - AquaServer Phase", "Install Aqua Database")
 	reqLogger.Info("Start installing AquaServer")
 
@@ -1045,7 +1045,7 @@ func (r *ReconcileAquaKubeEnforcer) installConfigAuditReports(cr *operatorv1alph
 	}
 
 	// Check if this AquaServer already exists
-	found := &aquasecurity1alpha1.ConfigAuditReports{}
+	found := &aquasecurity1alpha1.ConfigAuditReport{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: aquasb.Name, Namespace: aquasb.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
 		reqLogger.Info("Creating a New Aqua AquaServer", "AquaServer.Namespace", aquasb.Namespace, "AquaServer.Name", aquasb.Name)
@@ -1065,7 +1065,7 @@ func (r *ReconcileAquaKubeEnforcer) installConfigAuditReports(cr *operatorv1alph
 			found.Spec.StarboardService.Replicas = size
 			err = r.client.Status().Update(context.Background(), found)
 			if err != nil {
-				reqLogger.Error(err, "Aqua Kube-enforcer: Failed to update aqua starboard replicas.", "ConfigAuditReports.Namespace", found.Namespace, "ConfigAuditReports.Name", found.Name)
+				reqLogger.Error(err, "Aqua Kube-enforcer: Failed to update aqua starboard replicas.", "ConfigAuditReport.Namespace", found.Namespace, "ConfigAuditReport.Name", found.Name)
 				return reconcile.Result{Requeue: true, RequeueAfter: time.Duration(0)}, err
 			}
 			// Spec updated - return and requeue
@@ -1074,12 +1074,12 @@ func (r *ReconcileAquaKubeEnforcer) installConfigAuditReports(cr *operatorv1alph
 
 		update := !reflect.DeepEqual(aquasb.Spec, found.Spec)
 
-		reqLogger.Info("Checking for ConfigAuditReports Upgrade", "aquasb", aquasb.Spec, "found", found.Spec, "update bool", update)
+		reqLogger.Info("Checking for ConfigAuditReport Upgrade", "aquasb", aquasb.Spec, "found", found.Spec, "update bool", update)
 		if update {
 			found.Spec = *(aquasb.Spec.DeepCopy())
 			err = r.client.Update(context.Background(), found)
 			if err != nil {
-				reqLogger.Error(err, "Aqua Kube-enforcer: Failed to update ConfigAuditReports.", "Deployment.Namespace", found.Namespace, "Deployment.Name", found.Name)
+				reqLogger.Error(err, "Aqua Kube-enforcer: Failed to update ConfigAuditReport.", "Deployment.Namespace", found.Namespace, "Deployment.Name", found.Name)
 				return reconcile.Result{}, err
 			}
 			// Spec updated - return and requeue
@@ -1087,7 +1087,7 @@ func (r *ReconcileAquaKubeEnforcer) installConfigAuditReports(cr *operatorv1alph
 		}
 	}
 
-	// ConfigAuditReports already exists - don't requeue
-	reqLogger.Info("Skip reconcile: Aqua Starboard Exists", "ConfigAuditReports.Namespace", found.Namespace, "ConfigAuditReports.Name", found.Name)
+	// ConfigAuditReport already exists - don't requeue
+	reqLogger.Info("Skip reconcile: Aqua Starboard Exists", "ConfigAuditReport.Namespace", found.Namespace, "ConfigAuditReport.Name", found.Name)
 	return reconcile.Result{Requeue: true, RequeueAfter: time.Duration(0)}, nil
 }

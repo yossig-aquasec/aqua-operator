@@ -82,6 +82,8 @@ rules:
   - aquasecurity.github.io
   resources:
   - '*'
+  - configauditreports
+  - clusterconfigauditreports
   verbs:
   - create
   - delete

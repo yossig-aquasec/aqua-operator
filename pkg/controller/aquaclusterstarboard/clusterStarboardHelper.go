@@ -22,25 +22,25 @@ const (
 
 // ClusterStarboardParameters :
 type ClusterStarboardParameters struct {
-	ClusterStarboard *v1alpha1.ClusterConfigAuditReports
+	ClusterStarboard *v1alpha1.ClusterConfigAuditReport
 }
 
-// ClusterConfigAuditReportsHelper :
-type ClusterConfigAuditReportsHelper struct {
+// ClusterConfigAuditReportHelper :
+type ClusterConfigAuditReportHelper struct {
 	Parameters ClusterStarboardParameters
 }
 
-func newAquaClusterStarboardHelper(cr *v1alpha1.ClusterConfigAuditReports) *ClusterConfigAuditReportsHelper {
+func newAquaClusterStarboardHelper(cr *v1alpha1.ClusterConfigAuditReport) *ClusterConfigAuditReportHelper {
 	params := ClusterStarboardParameters{
 		ClusterStarboard: cr,
 	}
 
-	return &ClusterConfigAuditReportsHelper{
+	return &ClusterConfigAuditReportHelper{
 		Parameters: params,
 	}
 }
 
-func (enf *ClusterConfigAuditReportsHelper) CreateStarboardClusterRole(name string, namespace string) *rbacv1.ClusterRole {
+func (enf *ClusterConfigAuditReportHelper) CreateStarboardClusterRole(name string, namespace string) *rbacv1.ClusterRole {
 	rules := []rbacv1.PolicyRule{
 		{
 			APIGroups: []string{
@@ -157,7 +157,7 @@ func (enf *ClusterConfigAuditReportsHelper) CreateStarboardClusterRole(name stri
 				"aquasecurity.github.io",
 			},
 			Resources: []string{
-				"vulnerabilityreports", "configauditreports", "clusterconfigauditreports", "ciskubebenchreports",
+				"vulnerabilityreports", "configauditreports", "ClusterConfigAuditReport", "ciskubebenchreports",
 			},
 			Verbs: []string{
 				"get", "list", "watch", "create", "update", "delete",
@@ -182,7 +182,7 @@ func (enf *ClusterConfigAuditReportsHelper) CreateStarboardClusterRole(name stri
 }
 
 // CreateStarboardClusterServiceAccount Create new service account
-func (enf *ClusterConfigAuditReportsHelper) CreateStarboardClusterServiceAccount(cr, namespace, app, name string) *corev1.ServiceAccount {
+func (enf *ClusterConfigAuditReportHelper) CreateStarboardClusterServiceAccount(cr, namespace, app, name string) *corev1.ServiceAccount {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -207,7 +207,7 @@ func (enf *ClusterConfigAuditReportsHelper) CreateStarboardClusterServiceAccount
 	return sa
 }
 
-func (enf *ClusterConfigAuditReportsHelper) CreateClusterRoleBinding(cr, namespace, name, app, sa, clusterrole string) *rbacv1.ClusterRoleBinding {
+func (enf *ClusterConfigAuditReportHelper) CreateClusterRoleBinding(cr, namespace, name, app, sa, clusterrole string) *rbacv1.ClusterRoleBinding {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -244,7 +244,7 @@ func (enf *ClusterConfigAuditReportsHelper) CreateClusterRoleBinding(cr, namespa
 	return crb
 }
 
-func (enf *ClusterConfigAuditReportsHelper) CreateClusterSbSecret(cr, namespace, name, app string) *corev1.Secret {
+func (enf *ClusterConfigAuditReportHelper) CreateClusterSbSecret(cr, namespace, name, app string) *corev1.Secret {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -269,7 +269,7 @@ func (enf *ClusterConfigAuditReportsHelper) CreateClusterSbSecret(cr, namespace,
 	return starboardSecret
 }
 
-func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardConftestConfigMap(cr, namespace, name, app, version string) *corev1.ConfigMap {
+func (enf *ClusterConfigAuditReportHelper) CreateClusterStarboardConftestConfigMap(cr, namespace, name, app, version string) *corev1.ConfigMap {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -301,7 +301,7 @@ func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardConftestConfig
 	return configMap
 }
 
-func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardConfigMap(cr, namespace, name, app string) *corev1.ConfigMap {
+func (enf *ClusterConfigAuditReportHelper) CreateClusterStarboardConfigMap(cr, namespace, name, app string) *corev1.ConfigMap {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -329,7 +329,7 @@ func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardConfigMap(cr, 
 	return configMap
 }
 
-func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardDeployment(cr *v1alpha1.ClusterConfigAuditReports, name, app, registry, tag, pullPolicy, repository string) *appsv1.Deployment {
+func (enf *ClusterConfigAuditReportHelper) CreateClusterStarboardDeployment(cr *v1alpha1.ClusterConfigAuditReport, name, app, registry, tag, pullPolicy, repository string) *appsv1.Deployment {
 
 	image := os.Getenv("RELATED_IMAGE_STARBOARD")
 	if image == "" {
@@ -482,7 +482,7 @@ func (enf *ClusterConfigAuditReportsHelper) CreateClusterStarboardDeployment(cr 
 	return deployment
 }
 
-func (enf *ClusterConfigAuditReportsHelper) getClusterStarboardEnvVars(cr *v1alpha1.ClusterConfigAuditReports) []corev1.EnvVar {
+func (enf *ClusterConfigAuditReportHelper) getClusterStarboardEnvVars(cr *v1alpha1.ClusterConfigAuditReport) []corev1.EnvVar {
 
 	result := []corev1.EnvVar{
 		{
