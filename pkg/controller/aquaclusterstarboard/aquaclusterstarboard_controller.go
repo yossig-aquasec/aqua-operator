@@ -414,7 +414,7 @@ func (r *ReconcileClusterConfigAuditReport) addClusterStarboardDeployment(cr *v1
 	starboardHelper := newAquaClusterStarboardHelper(cr)
 	deployment := starboardHelper.CreateClusterStarboardDeployment(cr,
 		"aqua-starboard",
-		"starboard-deployment",
+		"starboard-operator",
 		registry,
 		tag,
 		pullPolicy,
