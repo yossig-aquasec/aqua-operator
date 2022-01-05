@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/aquasecurity/aqua-operator/pkg/controller/ConfigAuditReports"
+	"github.com/aquasecurity/aqua-operator/pkg/controller/aquastarboard"
 )
 
 func init() {
