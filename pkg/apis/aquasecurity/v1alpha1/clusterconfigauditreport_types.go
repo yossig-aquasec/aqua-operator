@@ -61,7 +61,7 @@ type ClusterConfigAuditReportStatus struct {
 
 // ClusterConfigAuditReport is the Schema for the clusterconfigauditreports API
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:path=clusterconfigauditreports,scope=Namespaced
+// +kubebuilder:resource:path=clusterconfigauditreports,scope=Cluster
 type ClusterConfigAuditReport struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
