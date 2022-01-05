@@ -453,7 +453,7 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerClusterRole(cr *operatorv1alp
 	enforcerHelper := newAquaKubeEnforcerHelper(cr)
 	crole := enforcerHelper.CreateKubeEnforcerClusterRole(cr.Name, cr.Namespace)
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, crole, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -479,7 +479,7 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerClusterRole(cr *operatorv1alp
 }
 
 func (r *ReconcileAquaKubeEnforcer) createAquaServiceAccount(cr *operatorv1alpha1.AquaKubeEnforcer) (reconcile.Result, error) {
-	reqLogger := log.WithValues("Kube-enforcer Requirments Phase", "Create Aqua KubeEnforcer Service Account")
+	reqLogger := log.WithValues("Csp Requirments Phase", "Create Aqua KubeEnforcer Service Account")
 	reqLogger.Info("Start creating aqua kube-enforcer service account")
 
 	// Define a new service account object
@@ -489,7 +489,7 @@ func (r *ReconcileAquaKubeEnforcer) createAquaServiceAccount(cr *operatorv1alpha
 		fmt.Sprintf("%s-requirments", cr.Name),
 		cr.Spec.Infrastructure.ServiceAccount)
 
-	// Set AquaKube-enforcerKind instance as the owner and controller
+	// Set AquaCspKind instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, sa, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -515,7 +515,7 @@ func (r *ReconcileAquaKubeEnforcer) createAquaServiceAccount(cr *operatorv1alpha
 }
 
 func (r *ReconcileAquaKubeEnforcer) addKEClusterRoleBinding(cr *operatorv1alpha1.AquaKubeEnforcer) (reconcile.Result, error) {
-	reqLogger := log.WithValues("Kube-enforcer - RBAC Phase", "Create ClusterRoleBinding")
+	reqLogger := log.WithValues("CSP - RBAC Phase", "Create ClusterRoleBinding")
 	reqLogger.Info("Start creating ClusterRole")
 
 	// Define a new ClusterRoleBinding object
@@ -527,7 +527,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEClusterRoleBinding(cr *operatorv1alpha1
 		cr.Spec.Infrastructure.ServiceAccount,
 		"aqua-kube-enforcer")
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, crb, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -536,7 +536,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEClusterRoleBinding(cr *operatorv1alpha1
 	found := &rbacv1.ClusterRoleBinding{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: crb.Name, Namespace: crb.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New ClusterRoleBinding", "ClusterRoleBinding.Namespace", crb.Namespace, "ClusterRoleBinding.Name", crb.Name)
+		reqLogger.Info("Aqua CSP: Creating a New ClusterRoleBinding", "ClusterRoleBinding.Namespace", crb.Namespace, "ClusterRoleBinding.Name", crb.Name)
 		err = r.client.Create(context.TODO(), crb)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
@@ -559,7 +559,7 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerRole(cr *operatorv1alpha1.Aqu
 	enforcerHelper := newAquaKubeEnforcerHelper(cr)
 	role := enforcerHelper.CreateKubeEnforcerRole(cr.Name, cr.Namespace, "aqua-kube-enforcer", fmt.Sprintf("%s-requirments", cr.Name))
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, role, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -585,7 +585,7 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerRole(cr *operatorv1alpha1.Aqu
 }
 
 func (r *ReconcileAquaKubeEnforcer) addKERoleBinding(cr *operatorv1alpha1.AquaKubeEnforcer) (reconcile.Result, error) {
-	reqLogger := log.WithValues("Kube-enforcer - RBAC Phase", "Create RoleBinding")
+	reqLogger := log.WithValues("CSP - RBAC Phase", "Create RoleBinding")
 	reqLogger.Info("Start creating RoleBinding")
 
 	// Define a new ClusterRoleBinding object
@@ -597,7 +597,7 @@ func (r *ReconcileAquaKubeEnforcer) addKERoleBinding(cr *operatorv1alpha1.AquaKu
 		cr.Spec.Infrastructure.ServiceAccount,
 		"aqua-kube-enforcer")
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, rb, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -606,7 +606,7 @@ func (r *ReconcileAquaKubeEnforcer) addKERoleBinding(cr *operatorv1alpha1.AquaKu
 	found := &rbacv1.ClusterRoleBinding{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: rb.Name, Namespace: rb.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New ClusterRoleBinding", "ClusterRoleBinding.Namespace", rb.Namespace, "ClusterRoleBinding.Name", rb.Name)
+		reqLogger.Info("Aqua CSP: Creating a New ClusterRoleBinding", "ClusterRoleBinding.Namespace", rb.Namespace, "ClusterRoleBinding.Name", rb.Name)
 		err = r.client.Create(context.TODO(), rb)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
@@ -623,7 +623,7 @@ func (r *ReconcileAquaKubeEnforcer) addKERoleBinding(cr *operatorv1alpha1.AquaKu
 }
 
 func (r *ReconcileAquaKubeEnforcer) addKEValidatingWebhook(cr *operatorv1alpha1.AquaKubeEnforcer) (reconcile.Result, error) {
-	reqLogger := log.WithValues("Kube-enforcer - RBAC Phase", "Create ValidatingWebhookConfiguration")
+	reqLogger := log.WithValues("CSP - RBAC Phase", "Create ValidatingWebhookConfiguration")
 	reqLogger.Info("Start creating ValidatingWebhookConfiguration")
 
 	// Define a new ClusterRoleBinding object
@@ -635,7 +635,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEValidatingWebhook(cr *operatorv1alpha1.
 		"aqua-kube-enforcer",
 		r.certs.CACert)
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, validWebhook, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -644,7 +644,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEValidatingWebhook(cr *operatorv1alpha1.
 	found := &admissionv1.ValidatingWebhookConfiguration{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: validWebhook.Name, Namespace: validWebhook.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New ValidatingWebhookConfiguration", "ValidatingWebhook.Namespace", validWebhook.Namespace, "ClusterRoleBinding.Name", validWebhook.Name)
+		reqLogger.Info("Aqua CSP: Creating a New ValidatingWebhookConfiguration", "ValidatingWebhook.Namespace", validWebhook.Namespace, "ClusterRoleBinding.Name", validWebhook.Name)
 		err = r.client.Create(context.TODO(), validWebhook)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
@@ -661,7 +661,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEValidatingWebhook(cr *operatorv1alpha1.
 }
 
 func (r *ReconcileAquaKubeEnforcer) addKEMutatingWebhook(cr *operatorv1alpha1.AquaKubeEnforcer) (reconcile.Result, error) {
-	reqLogger := log.WithValues("Kube-enforcer - RBAC Phase", "Create MutatingWebhookConfiguration")
+	reqLogger := log.WithValues("CSP - RBAC Phase", "Create MutatingWebhookConfiguration")
 	reqLogger.Info("Start creating MutatingWebhookConfiguration")
 
 	// Define a new ClusterRoleBinding object
@@ -673,7 +673,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEMutatingWebhook(cr *operatorv1alpha1.Aq
 		"aqua-kube-enforcer",
 		r.certs.CACert)
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, mutateWebhook, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -682,7 +682,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEMutatingWebhook(cr *operatorv1alpha1.Aq
 	found := &admissionv1.MutatingWebhookConfiguration{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: mutateWebhook.Name, Namespace: mutateWebhook.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New MutatingWebhookConfiguration", "MutatingWebhook.Namespace", mutateWebhook.Namespace, "ClusterRoleBinding.Name", mutateWebhook.Name)
+		reqLogger.Info("Aqua CSP: Creating a New MutatingWebhookConfiguration", "MutatingWebhook.Namespace", mutateWebhook.Namespace, "ClusterRoleBinding.Name", mutateWebhook.Name)
 		err = r.client.Create(context.TODO(), mutateWebhook)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
@@ -711,13 +711,13 @@ func (r *ReconcileAquaKubeEnforcer) addKEConfigMap(cr *operatorv1alpha1.AquaKube
 	}
 	configMap := enforcerHelper.CreateKEConfigMap(cr.Name,
 		cr.Namespace,
-		"aqua-kube-enforcer-starboard",
+		"aqua-csp-kube-enforcer",
 		"ke-configmap",
 		cr.Spec.Config.GatewayAddress,
 		cr.Spec.Config.ClusterName,
 		deployStarboard)
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, configMap, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -726,7 +726,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEConfigMap(cr *operatorv1alpha1.AquaKube
 	found := &corev1.ConfigMap{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: configMap.Name, Namespace: configMap.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New ConfigMap", "ConfigMap.Namespace", configMap.Namespace, "ConfigMap.Name", configMap.Name)
+		reqLogger.Info("Aqua CSP: Creating a New ConfigMap", "ConfigMap.Namespace", configMap.Namespace, "ConfigMap.Name", configMap.Name)
 		err = r.client.Create(context.TODO(), configMap)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
@@ -753,7 +753,7 @@ func (r *ReconcileAquaKubeEnforcer) addKESecretToken(cr *operatorv1alpha1.AquaKu
 		"ke-token-secret",
 		cr.Spec.Token)
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, tokenSecret, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -762,7 +762,7 @@ func (r *ReconcileAquaKubeEnforcer) addKESecretToken(cr *operatorv1alpha1.AquaKu
 	found := &corev1.Secret{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: tokenSecret.Name, Namespace: tokenSecret.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New token secret", "Secret.Namespace", tokenSecret.Namespace, "Secret.Name", tokenSecret.Name)
+		reqLogger.Info("Aqua CSP: Creating a New token secret", "Secret.Namespace", tokenSecret.Namespace, "Secret.Name", tokenSecret.Name)
 		err = r.client.Create(context.TODO(), tokenSecret)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
@@ -790,7 +790,7 @@ func (r *ReconcileAquaKubeEnforcer) addKESecretSSL(cr *operatorv1alpha1.AquaKube
 		r.certs.ServerKey,
 		r.certs.ServerCert)
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, sslSecret, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -799,7 +799,7 @@ func (r *ReconcileAquaKubeEnforcer) addKESecretSSL(cr *operatorv1alpha1.AquaKube
 	found := &corev1.Secret{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: sslSecret.Name, Namespace: sslSecret.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New ssl secret", "Secret.Namespace", sslSecret.Namespace, "Secret.Name", sslSecret.Name)
+		reqLogger.Info("Aqua CSP: Creating a New ssl secret", "Secret.Namespace", sslSecret.Namespace, "Secret.Name", sslSecret.Name)
 		err = r.client.Create(context.TODO(), sslSecret)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
@@ -825,7 +825,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEService(cr *operatorv1alpha1.AquaKubeEn
 		"aqua-kube-enforcer",
 		"ke-service")
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, service, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -834,7 +834,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEService(cr *operatorv1alpha1.AquaKubeEn
 	found := &corev1.Service{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: service.Name, Namespace: service.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New service", "Service.Namespace", service.Namespace, "Service.Name", service.Name)
+		reqLogger.Info("Aqua CSP: Creating a New service", "Service.Namespace", service.Namespace, "Service.Name", service.Name)
 		err = r.client.Create(context.TODO(), service)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
@@ -865,7 +865,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEDeployment(cr *operatorv1alpha1.AquaKub
 		pullPolicy,
 		repository)
 
-	// Set AquaKube-enforcer instance as the owner and controller
+	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, deployment, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -934,7 +934,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEDeployment(cr *operatorv1alpha1.AquaKub
 }
 
 func (r *ReconcileAquaKubeEnforcer) CreateImagePullSecret(cr *operatorv1alpha1.AquaKubeEnforcer) (reconcile.Result, error) {
-	reqLogger := log.WithValues("Kube-enforcer Requirments Phase", "Create Image Pull Secret")
+	reqLogger := log.WithValues("Csp Requirments Phase", "Create Image Pull Secret")
 	reqLogger.Info("Start creating aqua images pull secret")
 
 	// Define a new secret object
@@ -945,7 +945,7 @@ func (r *ReconcileAquaKubeEnforcer) CreateImagePullSecret(cr *operatorv1alpha1.A
 		cr.Spec.Config.ImagePullSecret,
 		*cr.Spec.RegistryData)
 
-	// Set AquaKube-enforcerKind instance as the owner and controller
+	// Set AquaCspKind instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, secret, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -992,7 +992,7 @@ func (r *ReconcileAquaKubeEnforcer) CreateClusterReaderRoleBinding(cr *operatorv
 	found := &rbacv1.ClusterRoleBinding{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: crb.Name}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Aqua Kube-enforcer: Creating a New KubeEnfocer ClusterReaderRoleBinding", "ClusterReaderRoleBinding.Namespace", crb.Namespace, "ClusterReaderRoleBinding.Name", crb.Name)
+		reqLogger.Info("Aqua CSP: Creating a New KubeEnfocer ClusterReaderRoleBinding", "ClusterReaderRoleBinding.Namespace", crb.Namespace, "ClusterReaderRoleBinding.Name", crb.Name)
 		err = r.client.Create(context.TODO(), crb)
 		if err != nil {
 			return reconcile.Result{Requeue: true}, nil
