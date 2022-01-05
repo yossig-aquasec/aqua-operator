@@ -322,7 +322,7 @@ func (enf *ConfigAuditReportHelper) CreateStarboardConfigMap(cr, namespace, name
 			Annotations: annotations,
 		},
 		Data: map[string]string{
-			"ConfigAuditReport.scanner": "Conftest",
+			"ConfigAuditReports.scanner": "Conftest",
 		},
 	}
 
