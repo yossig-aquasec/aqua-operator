@@ -743,7 +743,7 @@ func (ebf *AquaKubeEnforcerHelper) newStarboard(cr *operatorv1alpha1.AquaKubeEnf
 			Annotations: annotations,
 		},
 		Spec: aquasecurity1alpha1.ConfigAuditReportSpec{
-			Infrastructure:                cr.Spec.Infrastructure,
+			Infrastructure:                cr.Spec.DeployStarboard.Infrastructure,
 			AllowAnyVersion:               cr.Spec.DeployStarboard.AllowAnyVersion,
 			StarboardService:              cr.Spec.DeployStarboard.StarboardService,
 			Config:                        cr.Spec.DeployStarboard.Config,

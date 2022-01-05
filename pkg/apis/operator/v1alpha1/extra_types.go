@@ -135,6 +135,7 @@ type AquaStarboardConfig struct {
 }
 
 type AquaStarboardDetails struct {
+	Infrastructure                *AquaInfrastructure `json:"infra,omitempty"`
 	AllowAnyVersion               bool                `json:"allowAnyVersion,omitempty"`
 	StarboardService              *AquaService        `json:"deploy,required"`
 	Config                        AquaStarboardConfig `json:"config"`
