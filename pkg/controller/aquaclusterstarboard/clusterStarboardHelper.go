@@ -357,12 +357,12 @@ func (enf *ClusterConfigAuditReportHelper) CreateClusterStarboardDeployment(cr *
 
 	ports := []corev1.ContainerPort{
 		{
+			Name:          "probes",
 			ContainerPort: 9090,
-			Protocol:      corev1.ProtocolTCP,
 		},
 		{
+			Name:          "metrics",
 			ContainerPort: 8080,
-			Protocol:      corev1.ProtocolTCP,
 		},
 	}
 	//runAsUser := int64(11431)
