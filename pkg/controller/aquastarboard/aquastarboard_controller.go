@@ -122,13 +122,6 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	return nil
 }
 
-type StarboardCertificates struct {
-	CAKey      []byte
-	CACert     []byte
-	ServerKey  []byte
-	ServerCert []byte
-}
-
 // blank assignment to verify that ReconcileConfigAuditReports implements reconcile.Reconciler
 var _ reconcile.Reconciler = &ReconcileConfigAuditReports{}
 
