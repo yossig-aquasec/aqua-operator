@@ -357,12 +357,12 @@ func (enf *ConfigAuditReportHelper) CreateStarboardDeployment(cr *v1alpha1.Confi
 
 	ports := []corev1.ContainerPort{
 		{
+			Name:          "probes",
 			ContainerPort: 9090,
-			Protocol:      corev1.ProtocolTCP,
 		},
 		{
+			Name:          "metrics",
 			ContainerPort: 8080,
-			Protocol:      corev1.ProtocolTCP,
 		},
 	}
 	//runAsUser := int64(11431)
