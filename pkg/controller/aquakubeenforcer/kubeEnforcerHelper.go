@@ -49,7 +49,20 @@ func (enf *AquaKubeEnforcerHelper) CreateKubeEnforcerClusterRole(name string, na
 				"*",
 			},
 			Resources: []string{
-				"pods", "nodes", "namespaces", "deployments", "statefulsets", "jobs", "cronjobs", "daemonsets", "replicasets", "replicationcontrollers", "clusterroles", "clusterrolebindings", "componentstatuses",
+				"pods",
+				"nodes",
+				"namespaces",
+				"deployments",
+				"statefulsets",
+				"jobs",
+				"cronjobs",
+				"daemonsets",
+				"replicasets",
+				"replicationcontrollers",
+				"clusterroles",
+				"clusterrolebindings",
+				"componentstatuses",
+				"services",
 			},
 			Verbs: []string{
 				"get", "list", "watch",
@@ -64,6 +77,54 @@ func (enf *AquaKubeEnforcerHelper) CreateKubeEnforcerClusterRole(name string, na
 			},
 			Verbs: []string{
 				"get", "list", "watch", "update", "create",
+			},
+		},
+		{
+			APIGroups: []string{
+				"aquasecurity.github.io",
+			},
+			Resources: []string{
+				"configauditreports",
+				"clusterconfigauditreports",
+			},
+			Verbs: []string{
+				"get", "list", "watch",
+			},
+		},
+		{
+			APIGroups: []string{
+				"*",
+			},
+			Resources: []string{
+				"configmaps",
+			},
+			Verbs: []string{
+				"get", "list", "watch", "update", "create",
+			},
+		},
+		{
+			APIGroups: []string{
+				"*",
+			},
+			Resources: []string{
+				"roles",
+				"rolebindings",
+				"clusterroles",
+				"clusterrolebindings",
+			},
+			Verbs: []string{
+				"get", "list", "watch",
+			},
+		},
+		{
+			APIGroups: []string{
+				"*",
+			},
+			Resources: []string{
+				"customresourcedefinitions",
+			},
+			Verbs: []string{
+				"get", "list", "watch",
 			},
 		},
 	}
@@ -160,6 +221,17 @@ func (enf *AquaKubeEnforcerHelper) CreateKubeEnforcerRole(cr, namespace, name, a
 				"create", "delete",
 			},
 		},
+		{
+			APIGroups: []string{
+				"*",
+			},
+			Resources: []string{
+				"pods",
+			},
+			Verbs: []string{
+				"create", "delete",
+			},
+		},
 	}
 	labels := map[string]string{
 		"app":                app,
@@ -247,7 +319,21 @@ func (enf *AquaKubeEnforcerHelper) CreateValidatingWebhook(cr, namespace, name, 
 					"*",
 				},
 				Resources: []string{
-					"pods", "deployments", "replicasets", "replicationcontrollers", "statefulsets", "daemonsets", "jobs", "cronjobs",
+					"pods",
+					"deployments",
+					"replicasets",
+					"replicationcontrollers",
+					"statefulsets",
+					"daemonsets",
+					"jobs",
+					"cronjobs",
+					"configmaps",
+					"services",
+					"roles",
+					"rolebindings",
+					"clusterroles",
+					"clusterrolebindings",
+					"customresourcedefinitions",
 				},
 			},
 		},
@@ -723,7 +809,7 @@ func (ebf *AquaKubeEnforcerHelper) getEnvVars(cr *operatorv1alpha1.AquaKubeEnfor
 
 func (ebf *AquaKubeEnforcerHelper) newStarboard(cr *operatorv1alpha1.AquaKubeEnforcer) *aquasecurity1alpha1.ConfigAuditReport {
 	labels := map[string]string{
-		"app":                cr.Name + "-kube-nforcer",
+		"app":                cr.Name + "-kube-enforcer",
 		"deployedby":         "aqua-operator",
 		"aquasecoperator_cr": cr.Name,
 	}
