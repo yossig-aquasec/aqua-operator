@@ -822,7 +822,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEService(cr *operatorv1alpha1.AquaKubeEn
 	enforcerHelper := newAquaKubeEnforcerHelper(cr)
 	service := enforcerHelper.CreateKEService(cr.Name,
 		cr.Namespace,
-		"aqua-kube-enforcer",
+		"aqua-kube-enforcer-sa",
 		"ke-service")
 
 	// Set AquaCsp instance as the owner and controller
