@@ -407,7 +407,7 @@ func (enf *ConfigAuditReportHelper) CreateStarboardDeployment(cr *v1alpha1.Confi
 					},
 					Containers: []corev1.Container{
 						{
-							Name:            "starboard",
+							Name:            "operator",
 							Image:           image,
 							ImagePullPolicy: corev1.PullPolicy(pullPolicy),
 							SecurityContext: &corev1.SecurityContext{

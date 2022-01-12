@@ -413,7 +413,7 @@ func (r *ReconcileConfigAuditReport) addStarboardDeployment(cr *v1alpha1.ConfigA
 
 	starboardHelper := newConfigAuditReportHelper(cr)
 	deployment := starboardHelper.CreateStarboardDeployment(cr,
-		"aqua-starboard",
+		"starboard-operator",
 		"starboard-operator",
 		registry,
 		tag,
