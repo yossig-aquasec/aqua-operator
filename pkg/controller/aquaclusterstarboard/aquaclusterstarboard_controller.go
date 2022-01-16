@@ -465,7 +465,6 @@ func (r *ReconcileClusterConfigAuditReport) addClusterStarboardDeployment(cr *v1
 		podList := &corev1.PodList{}
 		labelSelector := labels.SelectorFromSet(found.Labels)
 		listOps := &client.ListOptions{
-			Namespace:     deployment.Namespace,
 			LabelSelector: labelSelector,
 		}
 		err = r.client.List(context.TODO(), podList, listOps)
