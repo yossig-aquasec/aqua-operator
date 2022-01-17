@@ -157,7 +157,7 @@ func (enf *AquaStarboardHelper) CreateStarboardClusterRole(name string, namespac
 				"aquasecurity.github.io",
 			},
 			Resources: []string{
-				"vulnerabilityreports", "AquaStarboards", "clusterAquaStarboards", "ciskubebenchreports",
+				"vulnerabilityreports", "configauditreports", "clusterconfigauditreports", "ciskubebenchreports",
 			},
 			Verbs: []string{
 				"get", "list", "watch", "create", "update", "delete",
