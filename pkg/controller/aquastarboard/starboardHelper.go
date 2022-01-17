@@ -322,7 +322,7 @@ func (enf *AquaStarboardHelper) CreateStarboardConfigMap(cr, namespace, name, ap
 			Annotations: annotations,
 		},
 		Data: map[string]string{
-			"AquaStarboards.scanner": "Conftest",
+			"configAuditReports.scanner": "Conftest",
 		},
 	}
 
