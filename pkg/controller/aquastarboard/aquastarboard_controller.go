@@ -1,4 +1,4 @@
-package ConfigAuditReport
+package AquaStarboard
 
 import (
 	"context"
@@ -37,14 +37,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-var log = logf.Log.WithName("controller_ConfigAuditReport")
+var log = logf.Log.WithName("controller_AquaStarboard")
 
 /**
 * USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
 * business logic.  Delete these comments after modifying this file.*
  */
 
-// Add creates a new ConfigAuditReport Controller and adds it to the Manager. The Manager will set fields on the Controller
+// Add creates a new AquaStarboard Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
 	return add(mgr, newReconciler(mgr))
@@ -52,28 +52,28 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileConfigAuditReport{client: mgr.GetClient(), scheme: mgr.GetScheme()}
+	return &ReconcileAquaStarboard{client: mgr.GetClient(), scheme: mgr.GetScheme()}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
 func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	// Create a new controller
-	c, err := controller.New("ConfigAuditReport-controller", mgr, controller.Options{Reconciler: r})
+	c, err := controller.New("AquaStarboard-controller", mgr, controller.Options{Reconciler: r})
 	if err != nil {
 		return err
 	}
 
-	// Watch for changes to primary resource ConfigAuditReport
-	err = c.Watch(&source.Kind{Type: &v1alpha1.ConfigAuditReport{}}, &handler.EnqueueRequestForObject{})
+	// Watch for changes to primary resource AquaStarboard
+	err = c.Watch(&source.Kind{Type: &v1alpha1.AquaStarboard{}}, &handler.EnqueueRequestForObject{})
 	if err != nil {
 		return err
 	}
 
 	// TODO(user): Modify this to be the types you create that are owned by the primary resource
-	// Watch for changes to secondary resource Pods and requeue the owner ConfigAuditReport
+	// Watch for changes to secondary resource Pods and requeue the owner AquaStarboard
 	err = c.Watch(&source.Kind{Type: &rbacv1.ClusterRole{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
-		OwnerType:    &v1alpha1.ConfigAuditReport{},
+		OwnerType:    &v1alpha1.AquaStarboard{},
 	})
 	if err != nil {
 		return err
@@ -81,7 +81,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 
 	err = c.Watch(&source.Kind{Type: &corev1.ServiceAccount{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
-		OwnerType:    &v1alpha1.ConfigAuditReport{},
+		OwnerType:    &v1alpha1.AquaStarboard{},
 	})
 	if err != nil {
 		return err
@@ -89,7 +89,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 
 	err = c.Watch(&source.Kind{Type: &rbacv1.ClusterRoleBinding{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
-		OwnerType:    &v1alpha1.ConfigAuditReport{},
+		OwnerType:    &v1alpha1.AquaStarboard{},
 	})
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 
 	err = c.Watch(&source.Kind{Type: &corev1.ConfigMap{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
-		OwnerType:    &v1alpha1.ConfigAuditReport{},
+		OwnerType:    &v1alpha1.AquaStarboard{},
 	})
 	if err != nil {
 		return err
@@ -105,7 +105,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 
 	err = c.Watch(&source.Kind{Type: &corev1.Secret{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
-		OwnerType:    &v1alpha1.ConfigAuditReport{},
+		OwnerType:    &v1alpha1.AquaStarboard{},
 	})
 	if err != nil {
 		return err
@@ -113,7 +113,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 
 	err = c.Watch(&source.Kind{Type: &appsv1.Deployment{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
-		OwnerType:    &v1alpha1.ConfigAuditReport{},
+		OwnerType:    &v1alpha1.AquaStarboard{},
 	})
 	if err != nil {
 		return err
@@ -122,11 +122,11 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	return nil
 }
 
-// blank assignment to verify that ReconcileConfigAuditReport implements reconcile.Reconciler
-var _ reconcile.Reconciler = &ReconcileConfigAuditReport{}
+// blank assignment to verify that ReconcileAquaStarboard implements reconcile.Reconciler
+var _ reconcile.Reconciler = &ReconcileAquaStarboard{}
 
-// ReconcileConfigAuditReport reconciles a ConfigAuditReport object
-type ReconcileConfigAuditReport struct {
+// ReconcileAquaStarboard reconciles a AquaStarboard object
+type ReconcileAquaStarboard struct {
 	// This client, initialized using mgr.Client() above, is a split client
 	// that reads objects from the cache and writes to the apiserver
 	client client.Client
@@ -136,12 +136,12 @@ type ReconcileConfigAuditReport struct {
 // Note:
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
-func (r *ReconcileConfigAuditReport) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
-	reqLogger.Info("Reconciling ConfigAuditReport")
+	reqLogger.Info("Reconciling AquaStarboard")
 
-	// Fetch the ConfigAuditReport instance
-	instance := &v1alpha1.ConfigAuditReport{}
+	// Fetch the AquaStarboard instance
+	instance := &v1alpha1.AquaStarboard{}
 	err := r.client.Get(context.TODO(), request.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
@@ -166,7 +166,7 @@ func (r *ReconcileConfigAuditReport) Reconcile(request reconcile.Request) (recon
 		return reconcile.Result{}, err
 	}
 
-	_, err = r.createConfigAuditReportServiceAccount(instance)
+	_, err = r.createAquaStarboardServiceAccount(instance)
 	if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -205,7 +205,7 @@ func (r *ReconcileConfigAuditReport) Reconcile(request reconcile.Request) (recon
 	return reconcile.Result{Requeue: true}, nil
 }
 
-func (r *ReconcileConfigAuditReport) updateStarboardObject(cr *v1alpha1.ConfigAuditReport) *v1alpha1.ConfigAuditReport {
+func (r *ReconcileAquaStarboard) updateStarboardObject(cr *v1alpha1.AquaStarboard) *v1alpha1.AquaStarboard {
 
 	cr.Spec.Infrastructure = common.UpdateAquaInfrastructure(cr.Spec.Infrastructure, cr.Name, cr.Namespace)
 	return cr
@@ -216,14 +216,14 @@ func (r *ReconcileConfigAuditReport) updateStarboardObject(cr *v1alpha1.ConfigAu
 	----------------------------------------------------------------------------------------------------------------
 */
 
-func (r *ReconcileConfigAuditReport) addStarboardClusterRole(cr *v1alpha1.ConfigAuditReport) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) addStarboardClusterRole(cr *v1alpha1.AquaStarboard) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Aqua Starboard Phase", "Create Aqua Starboard Cluster Role")
 	reqLogger.Info("Start creating starboard cluster role")
 
-	starboardHelper := newConfigAuditReportHelper(cr)
+	starboardHelper := newAquaStarboardHelper(cr)
 	crole := starboardHelper.CreateStarboardClusterRole(cr.Name, cr.Namespace)
 
-	// Set ConfigAuditReport instance as the owner and controller
+	// Set AquaStarboard instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, crole, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -248,18 +248,18 @@ func (r *ReconcileConfigAuditReport) addStarboardClusterRole(cr *v1alpha1.Config
 	return reconcile.Result{Requeue: true}, nil
 }
 
-func (r *ReconcileConfigAuditReport) createConfigAuditReportServiceAccount(cr *v1alpha1.ConfigAuditReport) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) createAquaStarboardServiceAccount(cr *v1alpha1.AquaStarboard) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Starboard Requirments Phase", "Create Aqua Starboard Service Account")
 	reqLogger.Info("Start creating aqua starboard service account")
 
 	// Define a new service account object
-	starboardHelper := newConfigAuditReportHelper(cr)
+	starboardHelper := newAquaStarboardHelper(cr)
 	sa := starboardHelper.CreateStarboardServiceAccount(cr.Name,
 		cr.Namespace,
 		fmt.Sprintf("%s-requirments", cr.Name),
 		cr.Spec.Infrastructure.ServiceAccount)
 
-	// Set ConfigAuditReportKind instance as the owner and controller
+	// Set AquaStarboardKind instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, sa, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -284,12 +284,12 @@ func (r *ReconcileConfigAuditReport) createConfigAuditReportServiceAccount(cr *v
 	return reconcile.Result{Requeue: true}, nil
 }
 
-func (r *ReconcileConfigAuditReport) addStarboardClusterRoleBinding(cr *v1alpha1.ConfigAuditReport) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) addStarboardClusterRoleBinding(cr *v1alpha1.AquaStarboard) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Starboard - RBAC Phase", "Create ClusterRoleBinding")
 	reqLogger.Info("Start creating ClusterRole")
 
 	// Define a new ClusterRoleBinding object
-	starboardHelper := newConfigAuditReportHelper(cr)
+	starboardHelper := newAquaStarboardHelper(cr)
 	crb := starboardHelper.CreateClusterRoleBinding(cr.Name,
 		cr.Namespace,
 		"aqua-starboard",
@@ -297,7 +297,7 @@ func (r *ReconcileConfigAuditReport) addStarboardClusterRoleBinding(cr *v1alpha1
 		cr.Spec.Infrastructure.ServiceAccount,
 		"aqua-starboard")
 
-	// Set ConfigAuditReport instance as the owner and controller
+	// Set AquaStarboard instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, crb, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -322,13 +322,13 @@ func (r *ReconcileConfigAuditReport) addStarboardClusterRoleBinding(cr *v1alpha1
 	return reconcile.Result{Requeue: true}, nil
 }
 
-func (r *ReconcileConfigAuditReport) addStarboardConfigMap(cr *v1alpha1.ConfigAuditReport) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) addStarboardConfigMap(cr *v1alpha1.AquaStarboard) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Starboard", "Create ConfigMap")
 	reqLogger.Info("Start creating ConfigMap")
 	//reqLogger.Info(fmt.Sprintf("cr object : %v", cr.ObjectMeta))
 
 	// Define a new ClusterRoleBinding object
-	starboardHelper := newConfigAuditReportHelper(cr)
+	starboardHelper := newAquaStarboardHelper(cr)
 	configMaps := []*corev1.ConfigMap{
 		starboardHelper.CreateStarboardConftestConfigMap(cr.Name,
 			cr.Namespace,
@@ -343,7 +343,7 @@ func (r *ReconcileConfigAuditReport) addStarboardConfigMap(cr *v1alpha1.ConfigAu
 		),
 	}
 
-	// Set ConfigAuditReport instance as the owner and controller
+	// Set AquaStarboard instance as the owner and controller
 	requeue := true
 	for _, configMap := range configMaps {
 		// Check if this ClusterRoleBinding already exists
@@ -369,18 +369,18 @@ func (r *ReconcileConfigAuditReport) addStarboardConfigMap(cr *v1alpha1.ConfigAu
 	return reconcile.Result{Requeue: requeue}, nil
 }
 
-func (r *ReconcileConfigAuditReport) addStarboardSecret(cr *v1alpha1.ConfigAuditReport) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) addStarboardSecret(cr *v1alpha1.AquaStarboard) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Starboard", "Create Token Secret")
 	reqLogger.Info("Start creating token secret")
 
-	starboardHelper := newConfigAuditReportHelper(cr)
-	starboardSecret := starboardHelper.CreateSbSecret(cr.Name,
+	starboardHelper := newAquaStarboardHelper(cr)
+	starboardSecret := starboardHelper.CreateStarboardSecret(cr.Name,
 		cr.Namespace,
 		"aqua-starboard-token",
 		"ke-token-secret",
 	)
 
-	// Set ConfigAuditReport instance as the owner and controller
+	// Set AquaStarboard instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, starboardSecret, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -405,13 +405,13 @@ func (r *ReconcileConfigAuditReport) addStarboardSecret(cr *v1alpha1.ConfigAudit
 	return reconcile.Result{Requeue: true}, nil
 }
 
-func (r *ReconcileConfigAuditReport) addStarboardDeployment(cr *v1alpha1.ConfigAuditReport) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) addStarboardDeployment(cr *v1alpha1.AquaStarboard) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Starboard", "Create Deployment")
 	reqLogger.Info("Start creating deployment")
 	reqLogger.Info("cr.Spec.Infrastructure.Version", cr.Spec.Infrastructure.Version)
 	pullPolicy, registry, repository, tag := extra.GetImageData("starboard", cr.Spec.Infrastructure.Version, cr.Spec.StarboardService.ImageData, cr.Spec.AllowAnyVersion)
 
-	starboardHelper := newConfigAuditReportHelper(cr)
+	starboardHelper := newAquaStarboardHelper(cr)
 	deployment := starboardHelper.CreateStarboardDeployment(cr,
 		"starboard-operator",
 		"starboard-operator",
@@ -420,7 +420,7 @@ func (r *ReconcileConfigAuditReport) addStarboardDeployment(cr *v1alpha1.ConfigA
 		pullPolicy,
 		repository)
 
-	// Set ConfigAuditReport instance as the owner and controller
+	// Set AquaStarboard instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, deployment, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -447,7 +447,7 @@ func (r *ReconcileConfigAuditReport) addStarboardDeployment(cr *v1alpha1.ConfigA
 
 	if found != nil {
 
-		update, err := k8s.CheckForK8sObjectUpdate("ConfigAuditReport deployment", found, deployment)
+		update, err := k8s.CheckForK8sObjectUpdate("AquaStarboard deployment", found, deployment)
 		if err != nil {
 			return reconcile.Result{}, err
 		}
@@ -470,7 +470,7 @@ func (r *ReconcileConfigAuditReport) addStarboardDeployment(cr *v1alpha1.ConfigA
 		}
 		err = r.client.List(context.TODO(), podList, listOps)
 		if err != nil {
-			reqLogger.Error(err, "Aqua Starboard: Failed to list pods.", "ConfigAuditReport.Namespace", cr.Namespace, "ConfigAuditReport.Name", cr.Name)
+			reqLogger.Error(err, "Aqua Starboard: Failed to list pods.", "AquaStarboard.Namespace", cr.Namespace, "AquaStarboard.Name", cr.Name)
 			return reconcile.Result{}, err
 		}
 		podNames := k8s.PodNames(podList.Items)
@@ -498,7 +498,7 @@ func (r *ReconcileConfigAuditReport) addStarboardDeployment(cr *v1alpha1.ConfigA
 	return reconcile.Result{Requeue: true}, nil
 }
 
-func (r *ReconcileConfigAuditReport) CreateImagePullSecret(cr *v1alpha1.ConfigAuditReport) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) CreateImagePullSecret(cr *v1alpha1.AquaStarboard) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Starboard Requirments Phase", "Create Image Pull Secret")
 	reqLogger.Info("Start creating aqua images pull secret")
 
@@ -510,7 +510,7 @@ func (r *ReconcileConfigAuditReport) CreateImagePullSecret(cr *v1alpha1.ConfigAu
 		cr.Spec.Config.ImagePullSecret,
 		*cr.Spec.RegistryData)
 
-	// Set ConfigAuditReportKind instance as the owner and controller
+	// Set AquaStarboardKind instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, secret, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -535,7 +535,7 @@ func (r *ReconcileConfigAuditReport) CreateImagePullSecret(cr *v1alpha1.ConfigAu
 	return reconcile.Result{Requeue: true}, nil
 }
 
-func (r *ReconcileConfigAuditReport) CreateClusterReaderRoleBinding(cr *v1alpha1.ConfigAuditReport) (reconcile.Result, error) {
+func (r *ReconcileAquaStarboard) CreateClusterReaderRoleBinding(cr *v1alpha1.AquaStarboard) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Starboard Phase", "Create Starboard ClusterReaderRoleBinding")
 	reqLogger.Info("Start creating Starboard ClusterReaderRoleBinding")
 
@@ -548,7 +548,7 @@ func (r *ReconcileConfigAuditReport) CreateClusterReaderRoleBinding(cr *v1alpha1
 		"aqua-starboard-sa",
 		consts.ClusterReaderRole)
 
-	// Set ConfigAuditReport instance as the owner and controller
+	// Set AquaStarboard instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, crb, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
@@ -573,7 +573,7 @@ func (r *ReconcileConfigAuditReport) CreateClusterReaderRoleBinding(cr *v1alpha1
 	return reconcile.Result{Requeue: true}, nil
 }
 
-func (r *ReconcileConfigAuditReport) updateStarboardServerObject(serviceObject *operatorv1alpha1.AquaService, StarboardImageData *operatorv1alpha1.AquaImage) *operatorv1alpha1.AquaService {
+func (r *ReconcileAquaStarboard) updateStarboardServerObject(serviceObject *operatorv1alpha1.AquaService, StarboardImageData *operatorv1alpha1.AquaImage) *operatorv1alpha1.AquaService {
 
 	if serviceObject == nil {
 		serviceObject = &operatorv1alpha1.AquaService{

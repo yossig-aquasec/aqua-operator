@@ -84,6 +84,7 @@ rules:
   - '*'
   - configauditreports
   - clusterconfigauditreports
+  - aquastarboards
   verbs:
   - create
   - delete

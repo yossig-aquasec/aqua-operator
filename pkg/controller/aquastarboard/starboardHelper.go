@@ -1,4 +1,4 @@
-package ConfigAuditReport
+package AquaStarboard
 
 import (
 	"fmt"
@@ -22,25 +22,25 @@ const (
 
 // StarboardParameters :
 type StarboardParameters struct {
-	Starboard *v1alpha1.ConfigAuditReport
+	Starboard *v1alpha1.AquaStarboard
 }
 
-// ConfigAuditReportHelper :
-type ConfigAuditReportHelper struct {
+// AquaStarboardHelper :
+type AquaStarboardHelper struct {
 	Parameters StarboardParameters
 }
 
-func newConfigAuditReportHelper(cr *v1alpha1.ConfigAuditReport) *ConfigAuditReportHelper {
+func newAquaStarboardHelper(cr *v1alpha1.AquaStarboard) *AquaStarboardHelper {
 	params := StarboardParameters{
 		Starboard: cr,
 	}
 
-	return &ConfigAuditReportHelper{
+	return &AquaStarboardHelper{
 		Parameters: params,
 	}
 }
 
-func (enf *ConfigAuditReportHelper) CreateStarboardClusterRole(name string, namespace string) *rbacv1.ClusterRole {
+func (enf *AquaStarboardHelper) CreateStarboardClusterRole(name string, namespace string) *rbacv1.ClusterRole {
 	rules := []rbacv1.PolicyRule{
 		{
 			APIGroups: []string{
@@ -157,7 +157,7 @@ func (enf *ConfigAuditReportHelper) CreateStarboardClusterRole(name string, name
 				"aquasecurity.github.io",
 			},
 			Resources: []string{
-				"vulnerabilityreports", "configauditreports", "clusterconfigauditreports", "ciskubebenchreports",
+				"vulnerabilityreports", "AquaStarboards", "clusterAquaStarboards", "ciskubebenchreports",
 			},
 			Verbs: []string{
 				"get", "list", "watch", "create", "update", "delete",
@@ -182,7 +182,7 @@ func (enf *ConfigAuditReportHelper) CreateStarboardClusterRole(name string, name
 }
 
 // CreateServiceAccount Create new service account
-func (enf *ConfigAuditReportHelper) CreateStarboardServiceAccount(cr, namespace, app, name string) *corev1.ServiceAccount {
+func (enf *AquaStarboardHelper) CreateStarboardServiceAccount(cr, namespace, app, name string) *corev1.ServiceAccount {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -207,7 +207,7 @@ func (enf *ConfigAuditReportHelper) CreateStarboardServiceAccount(cr, namespace,
 	return sa
 }
 
-func (enf *ConfigAuditReportHelper) CreateClusterRoleBinding(cr, namespace, name, app, sa, clusterrole string) *rbacv1.ClusterRoleBinding {
+func (enf *AquaStarboardHelper) CreateClusterRoleBinding(cr, namespace, name, app, sa, clusterrole string) *rbacv1.ClusterRoleBinding {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -244,7 +244,7 @@ func (enf *ConfigAuditReportHelper) CreateClusterRoleBinding(cr, namespace, name
 	return crb
 }
 
-func (enf *ConfigAuditReportHelper) CreateSbSecret(cr, namespace, name, app string) *corev1.Secret {
+func (enf *AquaStarboardHelper) CreateStarboardSecret(cr, namespace, name, app string) *corev1.Secret {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -269,7 +269,7 @@ func (enf *ConfigAuditReportHelper) CreateSbSecret(cr, namespace, name, app stri
 	return starboardSecret
 }
 
-func (enf *ConfigAuditReportHelper) CreateStarboardConftestConfigMap(cr, namespace, name, app, version string) *corev1.ConfigMap {
+func (enf *AquaStarboardHelper) CreateStarboardConftestConfigMap(cr, namespace, name, app, version string) *corev1.ConfigMap {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -301,7 +301,7 @@ func (enf *ConfigAuditReportHelper) CreateStarboardConftestConfigMap(cr, namespa
 	return configMap
 }
 
-func (enf *ConfigAuditReportHelper) CreateStarboardConfigMap(cr, namespace, name, app string) *corev1.ConfigMap {
+func (enf *AquaStarboardHelper) CreateStarboardConfigMap(cr, namespace, name, app string) *corev1.ConfigMap {
 	labels := map[string]string{
 		"app":                app,
 		"deployedby":         "aqua-operator",
@@ -322,14 +322,14 @@ func (enf *ConfigAuditReportHelper) CreateStarboardConfigMap(cr, namespace, name
 			Annotations: annotations,
 		},
 		Data: map[string]string{
-			"configAuditReports.scanner": "Conftest",
+			"AquaStarboards.scanner": "Conftest",
 		},
 	}
 
 	return configMap
 }
 
-func (enf *ConfigAuditReportHelper) CreateStarboardDeployment(cr *v1alpha1.ConfigAuditReport, name, app, registry, tag, pullPolicy, repository string) *appsv1.Deployment {
+func (enf *AquaStarboardHelper) CreateStarboardDeployment(cr *v1alpha1.AquaStarboard, name, app, registry, tag, pullPolicy, repository string) *appsv1.Deployment {
 
 	image := os.Getenv("RELATED_IMAGE_STARBOARD")
 	if image == "" {
@@ -482,7 +482,7 @@ func (enf *ConfigAuditReportHelper) CreateStarboardDeployment(cr *v1alpha1.Confi
 	return deployment
 }
 
-func (ebf *ConfigAuditReportHelper) getStarboardEnvVars(cr *v1alpha1.ConfigAuditReport) []corev1.EnvVar {
+func (ebf *AquaStarboardHelper) getStarboardEnvVars(cr *v1alpha1.AquaStarboard) []corev1.EnvVar {
 
 	result := []corev1.EnvVar{
 		{
