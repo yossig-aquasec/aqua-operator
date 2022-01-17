@@ -807,7 +807,7 @@ func (ebf *AquaKubeEnforcerHelper) getEnvVars(cr *operatorv1alpha1.AquaKubeEnfor
 
 // Starboard functions
 
-func (ebf *AquaKubeEnforcerHelper) newStarboard(cr *operatorv1alpha1.AquaKubeEnforcer) *aquasecurity1alpha1.ConfigAuditReport {
+func (ebf *AquaKubeEnforcerHelper) newStarboard(cr *operatorv1alpha1.AquaKubeEnforcer) *aquasecurity1alpha1.AquaStarboard {
 	labels := map[string]string{
 		"app":                cr.Name + "-kube-enforcer",
 		"deployedby":         "aqua-operator",
@@ -817,10 +817,10 @@ func (ebf *AquaKubeEnforcerHelper) newStarboard(cr *operatorv1alpha1.AquaKubeEnf
 		"description": "Deploy Aqua Starboard",
 	}
 
-	aquasb := &aquasecurity1alpha1.ConfigAuditReport{
+	aquasb := &aquasecurity1alpha1.AquaStarboard{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "aquasecurity.github.io/v1alpha1",
-			Kind:       "ConfigAuditReport",
+			Kind:       "AquaStarboard",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        cr.Name,
@@ -828,7 +828,7 @@ func (ebf *AquaKubeEnforcerHelper) newStarboard(cr *operatorv1alpha1.AquaKubeEnf
 			Labels:      labels,
 			Annotations: annotations,
 		},
-		Spec: aquasecurity1alpha1.ConfigAuditReportSpec{
+		Spec: aquasecurity1alpha1.AquaStarboardSpec{
 			Infrastructure:                cr.Spec.DeployStarboard.Infrastructure,
 			AllowAnyVersion:               cr.Spec.DeployStarboard.AllowAnyVersion,
 			StarboardService:              cr.Spec.DeployStarboard.StarboardService,

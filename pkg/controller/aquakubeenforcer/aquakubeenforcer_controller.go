@@ -1045,10 +1045,10 @@ func (r *ReconcileAquaKubeEnforcer) installAquaStarboard(cr *operatorv1alpha1.Aq
 	}
 
 	// Check if this AquaServer already exists
-	found := &aquasecurity1alpha1.ConfigAuditReport{}
+	found := &aquasecurity1alpha1.AquaStarboard{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: aquasb.Name, Namespace: aquasb.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Creating a New Aqua AquaStarboard", "ConfigAuditReport.Namespace", aquasb.Namespace, "ConfigAuditReport.Name", aquasb.Name)
+		reqLogger.Info("Creating a New Aqua AquaStarboard", "AquaStarboard.Namespace", aquasb.Namespace, "AquaStarboard.Name", aquasb.Name)
 		err = r.client.Create(context.TODO(), aquasb)
 		if err != nil {
 			return reconcile.Result{Requeue: true, RequeueAfter: time.Duration(0)}, err
@@ -1065,7 +1065,7 @@ func (r *ReconcileAquaKubeEnforcer) installAquaStarboard(cr *operatorv1alpha1.Aq
 			found.Spec.StarboardService.Replicas = size
 			err = r.client.Status().Update(context.Background(), found)
 			if err != nil {
-				reqLogger.Error(err, "Aqua Kube-enforcer: Failed to update aqua starboard replicas.", "ConfigAuditReport.Namespace", found.Namespace, "ConfigAuditReport.Name", found.Name)
+				reqLogger.Error(err, "Aqua Kube-enforcer: Failed to update aqua starboard replicas.", "AquaStarboard.Namespace", found.Namespace, "AquaStarboard.Name", found.Name)
 				return reconcile.Result{Requeue: true, RequeueAfter: time.Duration(0)}, err
 			}
 			// Spec updated - return and requeue
@@ -1087,7 +1087,7 @@ func (r *ReconcileAquaKubeEnforcer) installAquaStarboard(cr *operatorv1alpha1.Aq
 		}
 	}
 
-	// ConfigAuditReport already exists - don't requeue
-	reqLogger.Info("Skip reconcile: Aqua Starboard Exists", "ConfigAuditReport.Namespace", found.Namespace, "ConfigAuditReport.Name", found.Name)
+	// AquaStarboard already exists - don't requeue
+	reqLogger.Info("Skip reconcile: Aqua Starboard Exists", "AquaStarboard.Namespace", found.Namespace, "AquaStarboard.Name", found.Name)
 	return reconcile.Result{Requeue: true, RequeueAfter: time.Duration(0)}, nil
 }
