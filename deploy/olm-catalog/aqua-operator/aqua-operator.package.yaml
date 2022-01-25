@@ -1,0 +1,5 @@
+channels:
+- currentCSV: aqua-operator.v1.1.1
+  name: alpha
+defaultChannel: alpha
+packageName: aqua-operator
