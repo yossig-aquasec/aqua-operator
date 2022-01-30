@@ -1,7 +1,0 @@
-apiVersion: aquasecurity.github.io/v1alpha1
-kind: AquaStarboard
-metadata:
-  name: example-aquastarboard
-spec:
-  # Add fields here
-  size: 3

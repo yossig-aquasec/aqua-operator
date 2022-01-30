@@ -14,7 +14,7 @@ Use the Aqua Operator to:
 * Assign metadata tags to Aqua Enterprise components
 * Easily add and delete Aqua components like Scanner daemons, Kube-Enforcers and Enforcers
 	
-You can find all Aqua's Operator CRs and their properties at [Custom Resources](../deploy/crdsold). 
+You can find all Aqua's Operator CRs and their properties at [Custom Resources](../deployold/crdsold). 
 	   
 ## Prerequisites 
 
@@ -48,7 +48,7 @@ oc create secret docker-registry aqua-registry --docker-server=registry.aquasec.
 The Aqua Operator includes a few CRDs to allow you to deploy Aqua in different configurations. Before you create your deployment CR, please review commons CR examples in the section *CR Examples* below.
 
 
-**[AquaCSP CRD](../deploy/crdsold/operator.aquasec.com_aquacsps_crd.yaml)** provides the fastest methods to deploy Aqua Enterprise in a single cluster. AquaCSP defines how to deploy the Server, Gateway, Aqua Enforcer, and KubeEnforcer in the target cluster. Please see the [example CR](../deploy/crdsold/operator_v1alpha1_aquacsp_cr.yaml) for the listing of all fields and configurations.
+**[AquaCSP CRD](../deployold/crdsold/operator.aquasec.com_aquacsps_crd.yaml)** provides the fastest methods to deploy Aqua Enterprise in a single cluster. AquaCSP defines how to deploy the Server, Gateway, Aqua Enforcer, and KubeEnforcer in the target cluster. Please see the [example CR](../deployold/crdsold/operator_v1alpha1_aquacsp_cr.yaml) for the listing of all fields and configurations.
 * You can set the enforcement mode using the ```.spec.enforcer.enforceMode``` property in the CR file.
 * You can deploy a Route by setting the  ```.spec.route``` property to "true".
 * The default service type for the Console and Gateway is ClusterIP. You can change the service type in the CR.
@@ -59,9 +59,9 @@ The Aqua Operator includes a few CRDs to allow you to deploy Aqua in different c
 * You can define the server/gateway resources requests/limits with ```.spec.<<server/gateway>>.resources```
 
 
-The **[AquaServer CRD](../deploy/crdsold/operator_v1alpha1_aquaserver_cr.yaml)**, **[AquaDatabase CRD](../deploy/crdsold/operator_v1alpha1_aquadatabase_cr.yaml)**, and **[AquaGateway CRD](../deploy/crdsold/operator_v1alpha1_aquagateway_cr.yaml)** are used for advanced configurations where the server components are deployed across multiple clusters.
+The **[AquaServer CRD](../deployold/crdsold/operator_v1alpha1_aquaserver_cr.yaml)**, **[AquaDatabase CRD](../deployold/crdsold/operator_v1alpha1_aquadatabase_cr.yaml)**, and **[AquaGateway CRD](../deployold/crdsold/operator_v1alpha1_aquagateway_cr.yaml)** are used for advanced configurations where the server components are deployed across multiple clusters.
 
-**[AquaEnforcer CRD](../deploy/crdsold/operator_v1alpha1_aquaenforcer_cr.yaml)** is used to deploy the Aqua Enforcer in any cluster. Please see the [example CR](../deploy/crdsold/operator_v1alpha1_aquaenforcer_cr.yaml) for the listing of all fields and configurations.
+**[AquaEnforcer CRD](../deployold/crdsold/operator_v1alpha1_aquaenforcer_cr.yaml)** is used to deploy the Aqua Enforcer in any cluster. Please see the [example CR](../deployold/crdsold/operator_v1alpha1_aquaenforcer_cr.yaml) for the listing of all fields and configurations.
 * You need to provide a token to identify the Aqua Enforcer.
 * You can set the target Gateway using the ```.spec.gateway.host```and ```.spec.gateway.port``` properties.
 * You can choose to deploy a different version of the Aqua Enforcer by setting the ```.spec.deploy.image.tag``` property. 
@@ -69,7 +69,7 @@ The **[AquaServer CRD](../deploy/crdsold/operator_v1alpha1_aquaserver_cr.yaml)**
 * You can add environment variables using ```.spec.env```.
 * You can define the enforcer resources requests/limits using ```.spec.deploy.resources```.
 
-**[AquaKubeEnforcer CRD](../deploy/crdsold/operator_v1alpha1_aquakubeenforcer_cr.yaml)** is used to deploy the KubeEnforcer in your target cluster. Please see the [example CR](../deploy/crdsold/operator_v1alpha1_aquakubeenforcer_cr.yaml) for the listing of all fields and configurations.
+**[AquaKubeEnforcer CRD](../deployold/crdsold/operator_v1alpha1_aquakubeenforcer_cr.yaml)** is used to deploy the KubeEnforcer in your target cluster. Please see the [example CR](../deployold/crdsold/operator_v1alpha1_aquakubeenforcer_cr.yaml) for the listing of all fields and configurations.
 * You need to provide a token to identify the KubeEnforcer to the Aqua Server.
 * You can set the target Gateway using the ```.spec.config.gateway_address```  property.
 * You can choose to deploy a different version of the KubeEnforcer by setting the ```.spec.deploy.image.tag``` property.
@@ -77,7 +77,7 @@ The **[AquaServer CRD](../deploy/crdsold/operator_v1alpha1_aquaserver_cr.yaml)**
 * You can add environment variables using ```.spec.env```.
 * You can define the kube-enforcer resources requests/limits using ```.spec.deploy.resources```.
 
-**[AquaScanner CRD](../deploy/crdsold/operator_v1alpha1_aquascanner_cr.yaml)** is used to deploy the Aqua Scanner in any cluster. Please see the [example CR](../deploy/crdsold/operator_v1alpha1_aquascanner_cr.yaml) for the listing of all fields and configurations.
+**[AquaScanner CRD](../deployold/crdsold/operator_v1alpha1_aquascanner_cr.yaml)** is used to deploy the Aqua Scanner in any cluster. Please see the [example CR](../deployold/crdsold/operator_v1alpha1_aquascanner_cr.yaml) for the listing of all fields and configurations.
 * You need to set the target Aqua Server using the ```.spec.login.host```  property.
 * You need to provide the ```.spec.login.username``` and ```.spec.login.password``` to authenticate with the Aqua Server.
 * You can set ``.spec.login.tlsNoVerify`` if you connect scanner to HTTPS server, and don't want to use mTLS verification.  
@@ -214,7 +214,7 @@ The mTLS will be enabled automatically if the following secretes are available i
 1. Create a new SCC (Security Context Constraint):
    
     The aqua-scc yaml defines the cluster’s security context constraints. We strongly recommend not changing anything in this yaml file.
-    * Download [aqua-scc](../deploy/aqua-scc.yaml) yaml.
+    * Download [aqua-scc](../deployold/aqua-scc.yaml) yaml.
     * Apply it by typing:
   ```shell
   oc apply -f aqua-scc.yaml
@@ -548,7 +548,7 @@ metadata:
 spec:
   infra:
     version: '6.5'
-    serviceAccount: aqua-kube-enforcer-sa
+    serviceAccount: aqua-kube-enforcer
   config:
     gateway_address: 'aqua-gateway.aqua:8443'     # Required: provide <<AQUA GW IP OR DNS: AQUA GW PORT>>
     cluster_name: aqua-secure                     # Required: provide your cluster name

@@ -822,7 +822,7 @@ func (r *ReconcileAquaKubeEnforcer) addKEService(cr *operatorv1alpha1.AquaKubeEn
 	enforcerHelper := newAquaKubeEnforcerHelper(cr)
 	service := enforcerHelper.CreateKEService(cr.Name,
 		cr.Namespace,
-		"aqua-kube-enforcer-sa",
+		"aqua-kube-enforcer",
 		"ke-service")
 
 	// Set AquaCsp instance as the owner and controller
@@ -980,7 +980,7 @@ func (r *ReconcileAquaKubeEnforcer) CreateClusterReaderRoleBinding(cr *operatorv
 		consts.AquaKubeEnforcerSAClusterReaderRoleBind,
 		fmt.Sprintf("%s-kube-enforcer-cluster-reader", cr.Name),
 		"Deploy Aqua KubeEnforcer Cluster Reader Role Binding",
-		"aqua-kube-enforcer-sa",
+		"aqua-kube-enforcer",
 		consts.ClusterReaderRole)
 
 	// Set AquaKube-enforcer instance as the owner and controller

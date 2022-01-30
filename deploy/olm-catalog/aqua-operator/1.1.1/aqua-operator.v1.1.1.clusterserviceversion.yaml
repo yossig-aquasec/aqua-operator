@@ -312,7 +312,7 @@ metadata:
               }
             ],
             "infra": {
-              "serviceAccount": "aqua-kube-enforcer-sa",
+              "serviceAccount": "aqua-kube-enforcer",
               "version": "6.5"
             },
             "token": "\u003c\u003cKubeEnforcer Group Token\u003e\u003e"
