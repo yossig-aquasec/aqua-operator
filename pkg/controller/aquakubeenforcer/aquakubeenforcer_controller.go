@@ -10,6 +10,7 @@ import (
 	"encoding/pem"
 	syserrors "errors"
 	"fmt"
+	"k8s.io/apimachinery/pkg/api/equality"
 	"math/big"
 	"reflect"
 	"strings"
@@ -716,15 +717,20 @@ func (r *ReconcileAquaKubeEnforcer) addKEConfigMap(cr *operatorv1alpha1.AquaKube
 		cr.Spec.Config.GatewayAddress,
 		cr.Spec.Config.ClusterName,
 		deployStarboard)
+	hash, err := extra.GenerateMD5ForSpec(configMap.Data)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+	cr.Spec.ConfigMapChecksum = hash
 
 	// Set AquaCsp instance as the owner and controller
 	if err := controllerutil.SetControllerReference(cr, configMap, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
 
-	// Check if this ClusterRoleBinding already exists
-	found := &corev1.ConfigMap{}
-	err := r.client.Get(context.TODO(), types.NamespacedName{Name: configMap.Name, Namespace: configMap.Namespace}, found)
+	// Check if this ConfigMap already exists
+	foundConfigMap := &corev1.ConfigMap{}
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: configMap.Name, Namespace: configMap.Namespace}, foundConfigMap)
 	if err != nil && errors.IsNotFound(err) {
 		reqLogger.Info("Aqua CSP: Creating a New ConfigMap", "ConfigMap.Namespace", configMap.Namespace, "ConfigMap.Name", configMap.Name)
 		err = r.client.Create(context.TODO(), configMap)
@@ -737,8 +743,21 @@ func (r *ReconcileAquaKubeEnforcer) addKEConfigMap(cr *operatorv1alpha1.AquaKube
 		return reconcile.Result{}, err
 	}
 
+	// Check if the ConfigMap Data, matches the found Data
+	if !equality.Semantic.DeepDerivative(configMap.Data, foundConfigMap.Data) {
+		foundConfigMap = configMap
+		log.Info("Aqua KubeEnforcer: Updating ConfigMap", "ConfigMap.Namespace", foundConfigMap.Namespace, "ConfigMap.Name", foundConfigMap.Name)
+		err := r.client.Update(context.TODO(), foundConfigMap)
+		if err != nil {
+			log.Error(err, "Failed to update ConfigMap", "ConfigMap.Namespace", foundConfigMap.Namespace, "ConfigMap.Name", foundConfigMap.Name)
+			return reconcile.Result{}, err
+		}
+
+		return reconcile.Result{Requeue: true}, nil
+	}
+
 	// MutatingWebhookConfiguration already exists - don't requeue
-	reqLogger.Info("Skip reconcile: Aqua KubeEnforcer ConfigMap Exists", "ConfigMap.Namespace", found.Namespace, "ConfigMap.Name", found.Name)
+	reqLogger.Info("Skip reconcile: Aqua KubeEnforcer ConfigMap Exists", "ConfigMap.Namespace", foundConfigMap.Namespace, "ConfigMap.Name", foundConfigMap.Name)
 	return reconcile.Result{Requeue: true}, nil
 }
 

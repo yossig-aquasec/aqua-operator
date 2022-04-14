@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/aquasecurity/aqua-operator/pkg/apis/aquasecurity/v1alpha1"
+	"k8s.io/apimachinery/pkg/api/equality"
 	"reflect"
 	"strings"
 
@@ -343,6 +344,20 @@ func (r *ReconcileAquaStarboard) addStarboardConfigMap(cr *v1alpha1.AquaStarboar
 		),
 	}
 
+	configMapsData := make(map[string]string)
+
+	for _, configMap := range configMaps {
+		for k, v := range configMap.Data {
+			configMapsData[k] = v
+		}
+	}
+
+	hash, err := extra.GenerateMD5ForSpec(configMapsData)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+	cr.Spec.ConfigMapChecksum = hash
+
 	// Set AquaStarboard instance as the owner and controller
 	requeue := true
 	for _, configMap := range configMaps {
@@ -352,8 +367,8 @@ func (r *ReconcileAquaStarboard) addStarboardConfigMap(cr *v1alpha1.AquaStarboar
 		}
 
 		// Check if this ClusterRoleBinding already exists
-		found := &corev1.ConfigMap{}
-		err := r.client.Get(context.TODO(), types.NamespacedName{Name: configMap.Name, Namespace: configMap.Namespace}, found)
+		foundConfigMap := &corev1.ConfigMap{}
+		err := r.client.Get(context.TODO(), types.NamespacedName{Name: configMap.Name, Namespace: configMap.Namespace}, foundConfigMap)
 		if err != nil && errors.IsNotFound(err) {
 			reqLogger.Info("Aqua Starboard: Creating a New ConfigMap", "ConfigMap.Namespace", configMap.Namespace, "ConfigMap.Name", configMap.Name)
 			err = r.client.Create(context.TODO(), configMap)
@@ -363,8 +378,21 @@ func (r *ReconcileAquaStarboard) addStarboardConfigMap(cr *v1alpha1.AquaStarboar
 		} else if err != nil {
 			return reconcile.Result{}, err
 		}
+
+		// Check if the ConfigMap Data, matches the found Data
+		if !equality.Semantic.DeepDerivative(configMap.Data, foundConfigMap.Data) {
+			foundConfigMap = configMap
+			log.Info("Aqua Starboard: Updating ConfigMap", "ConfigMap.Namespace", foundConfigMap.Namespace, "ConfigMap.Name", foundConfigMap.Name)
+			err := r.client.Update(context.TODO(), foundConfigMap)
+			if err != nil {
+				log.Error(err, "Aqua Starboard: Failed to update ConfigMap", "ConfigMap.Namespace", foundConfigMap.Namespace, "ConfigMap.Name", foundConfigMap.Name)
+				return reconcile.Result{}, err
+			}
+			return reconcile.Result{Requeue: true}, nil
+		}
+
 		// MutatingWebhookConfiguration already exists - don't requeue
-		reqLogger.Info("Skip reconcile: Aqua Starboard ConfigMap Exists", "ConfigMap.Namespace", found.Namespace, "ConfigMap.Name", found.Name)
+		reqLogger.Info("Skip reconcile: Aqua Starboard ConfigMap Exists", "ConfigMap.Namespace", foundConfigMap.Namespace, "ConfigMap.Name", foundConfigMap.Name)
 	}
 	return reconcile.Result{Requeue: requeue}, nil
 }

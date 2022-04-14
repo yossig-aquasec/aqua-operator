@@ -347,7 +347,8 @@ func (enf *AquaStarboardHelper) CreateStarboardDeployment(cr *v1alpha1.AquaStarb
 		"aquasecoperator_cr": cr.Name,
 	}
 	annotations := map[string]string{
-		"description": "Deploy Starboard Deployment",
+		"description":       "Deploy Starboard Deployment",
+		"ConfigMapChecksum": cr.Spec.ConfigMapChecksum,
 	}
 
 	privileged := false

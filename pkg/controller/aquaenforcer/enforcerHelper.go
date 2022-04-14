@@ -120,7 +120,8 @@ func (enf *AquaEnforcerHelper) CreateDaemonSet(cr *operatorv1alpha1.AquaEnforcer
 		"aqua.component":     "enforcer",
 	}
 	annotations := map[string]string{
-		"description": "Secret for aqua database password",
+		"description":       "Secret for aqua database password",
+		"ConfigMapChecksum": cr.Spec.ConfigMapChecksum,
 	}
 
 	privileged := true

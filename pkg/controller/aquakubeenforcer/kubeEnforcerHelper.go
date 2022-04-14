@@ -593,7 +593,8 @@ func (enf *AquaKubeEnforcerHelper) CreateKEDeployment(cr *operatorv1alpha1.AquaK
 		"aqua.component":     "kubeenforcer",
 	}
 	annotations := map[string]string{
-		"description": "Deploy Kube Enforcer Deployment",
+		"description":       "Deploy Kube Enforcer Deployment",
+		"ConfigMapChecksum": cr.Spec.ConfigMapChecksum,
 	}
 
 	envVars := enf.getEnvVars(cr)
