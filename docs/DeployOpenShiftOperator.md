@@ -541,6 +541,7 @@ spec:
     host: aqua-gateway
     port: 8443
   token: "<<your-token>>"                   # Required: The Enforcer group token can use an existing secret instead (you can create a token from the Aqua console)
+  aqua_express_mode: false                  # Optional: Change to true, to enable express mode deployment of enforcer
 ```
 
 #### Example: Deploying the KubeEnforcer
