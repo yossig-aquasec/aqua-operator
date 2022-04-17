@@ -273,7 +273,7 @@ spec:
   infra:                                    
     serviceAccount: "aqua-sa"               
     namespace: "aqua"                       
-    version: "6.5"                          
+    version: "2022.4"                          
     requirements: true                      
   common:
     imagePullSecret: "aqua-registry"        # Optional: If already created image pull secret then mention in here
@@ -329,7 +329,7 @@ spec:
   infra:                                    
     serviceAccount: "aqua-sa"               
     namespace: "aqua"                       
-    version: "6.5"                          
+    version: "2022.4"                          
     requirements: true                      
   common:
     imagePullSecret: "aqua-registry"        # Optional: If already created image pull secret then mention in here
@@ -381,7 +381,7 @@ spec:
   infra:                                    
     serviceAccount: "aqua-sa"               
     namespace: "aqua"                       
-    version: "6.5"                          
+    version: "2022.4"                          
     requirements: true                      
   common:
     imagePullSecret: "aqua-registry"        # Optional: If already created image pull secret then mention in here
@@ -431,7 +431,7 @@ spec:
   infra:                                    
     serviceAccount: "aqua-sa"               
     namespace: "aqua"                       
-    version: "6.5"                          
+    version: "2022.4"                          
     requirements: true                      
   common:
     imagePullSecret: "aqua-registry"        # Optional: If already created image pull secret then mention in here
@@ -474,7 +474,7 @@ spec:
   infra:                                    
     serviceAccount: "aqua-sa"               
     namespace: "aqua"                       
-    version: "6.5"                          
+    version: "2022.4"                          
     requirements: true                      
   common:
     imagePullSecret: "aqua-registry"        # Optional: If already created image pull secret then mention in here
@@ -528,7 +528,7 @@ metadata:
 spec:
   infra:                                    
     serviceAccount: "aqua-sa"                
-    version: "6.5"                          # Optional: auto generate to latest version
+    version: "2022.4"                          # Optional: auto generate to latest version
   common:
     imagePullSecret: "aqua-registry"        # Optional: if already created image pull secret then mention in here
   deploy:                                   # Optional: information about Aqua Enforcer deployment
@@ -555,7 +555,7 @@ metadata:
   namespace: aqua
 spec:
   infra:
-    version: '6.5'
+    version: '2022.4'
     serviceAccount: aqua-kube-enforcer-sa
   config:
     gateway_address: 'aqua-gateway:8443'          # Required: provide <<AQUA GW IP OR DNS: AQUA GW PORT>>
@@ -606,7 +606,7 @@ metadata:
 spec:
   infra:
     serviceAccount: aqua-sa
-    version: '6.5'
+    version: '2022.4'
   deploy:
     replicas: 1
     image:
