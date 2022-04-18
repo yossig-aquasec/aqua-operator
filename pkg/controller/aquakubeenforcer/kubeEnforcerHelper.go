@@ -223,6 +223,9 @@ func (enf *AquaKubeEnforcerHelper) CreateKubeEnforcerRole(cr, namespace, name, a
 		},
 		{
 			APIGroups: []string{
+				"*",
+			},
+			Resources: []string{
 				"leases",
 			},
 			Verbs: []string{

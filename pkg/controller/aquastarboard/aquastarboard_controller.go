@@ -244,6 +244,19 @@ func (r *ReconcileAquaStarboard) addStarboardClusterRole(cr *v1alpha1.AquaStarbo
 		return reconcile.Result{}, err
 	}
 
+	// Check if the ClusterRole Rules, matches the found Rules
+	if !equality.Semantic.DeepDerivative(crole.Rules, found.Rules) {
+		found = crole
+		log.Info("Aqua Starboard: Updating ClusterRole", "ClusterRole.Namespace", found.Namespace, "ClusterRole.Name", found.Name)
+		err := r.client.Update(context.TODO(), found)
+		if err != nil {
+			log.Error(err, "Failed to update ClusterRole", "ClusterRole.Namespace", found.Namespace, "ClusterRole.Name", found.Name)
+			return reconcile.Result{}, err
+		}
+
+		return reconcile.Result{Requeue: true}, nil
+	}
+
 	// ClusterRole already exists - don't requeue
 	reqLogger.Info("Skip reconcile: Aqua ClusterRole Exists", "ClusterRole.Namespace", found.Namespace, "ClusterRole.Name", found.Name)
 	return reconcile.Result{Requeue: true}, nil

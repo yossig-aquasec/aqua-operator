@@ -474,6 +474,19 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerClusterRole(cr *operatorv1alp
 		return reconcile.Result{}, err
 	}
 
+	// Check if the ClusterRole Rules, matches the found Rules
+	if !equality.Semantic.DeepDerivative(crole.Rules, found.Rules) {
+		found = crole
+		log.Info("Aqua KubeEnforcer: Updating ClusterRole", "ClusterRole.Namespace", found.Namespace, "ClusterRole.Name", found.Name)
+		err := r.client.Update(context.TODO(), found)
+		if err != nil {
+			log.Error(err, "Failed to update ClusterRole", "ClusterRole.Namespace", found.Namespace, "ClusterRole.Name", found.Name)
+			return reconcile.Result{}, err
+		}
+
+		return reconcile.Result{Requeue: true}, nil
+	}
+
 	// ClusterRole already exists - don't requeue
 	reqLogger.Info("Skip reconcile: Aqua ClusterRole Exists", "ClusterRole.Namespace", found.Namespace, "ClusterRole.Name", found.Name)
 	return reconcile.Result{Requeue: true}, nil
@@ -565,7 +578,7 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerRole(cr *operatorv1alpha1.Aqu
 		return reconcile.Result{}, err
 	}
 
-	// Check if this ClusterRole already exists
+	// Check if this Role already exists
 	found := &rbacv1.Role{}
 	err := r.client.Get(context.TODO(), types.NamespacedName{Name: role.Name, Namespace: role.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
@@ -578,6 +591,19 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerRole(cr *operatorv1alpha1.Aqu
 		return reconcile.Result{}, nil
 	} else if err != nil {
 		return reconcile.Result{}, err
+	}
+
+	// Check if the Role Rules, matches the found Rules
+	if !equality.Semantic.DeepDerivative(role.Rules, found.Rules) {
+		found = role
+		log.Info("Aqua KubeEnforcer: Updating Role", "Role.Namespace", found.Namespace, "Role.Name", found.Name)
+		err := r.client.Update(context.TODO(), found)
+		if err != nil {
+			log.Error(err, "Failed to update Role", "Role.Namespace", found.Namespace, "Role.Name", found.Name)
+			return reconcile.Result{}, err
+		}
+
+		return reconcile.Result{Requeue: true}, nil
 	}
 
 	// ClusterRole already exists - don't requeue
