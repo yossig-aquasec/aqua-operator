@@ -295,7 +295,7 @@ func (enf *AquaStarboardHelper) CreateStarboardConftestConfigMap(cr, namespace, 
 			Annotations: annotations,
 		},
 		Data: map[string]string{
-			"conftest.imageRef":                  fmt.Sprintf("%s/%s:%s", consts.Registry, "kube-enforcer", version),
+			"conftest.imageRef":                  version,
 			"conftest.resources.limits.cpu":      "15m",
 			"conftest.resources.limits.memory":   "40M",
 			"conftest.resources.requests.cpu":    "1m",

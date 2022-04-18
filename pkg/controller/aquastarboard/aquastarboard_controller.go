@@ -231,7 +231,7 @@ func (r *ReconcileAquaStarboard) addStarboardClusterRole(cr *v1alpha1.AquaStarbo
 
 	// Check if this ClusterRole already exists
 	found := &rbacv1.ClusterRole{}
-	err := r.client.Get(context.TODO(), types.NamespacedName{Name: crole.Name, Namespace: crole.Namespace}, found)
+	err := r.client.Get(context.TODO(), types.NamespacedName{Name: crole.Name}, found)
 	if err != nil && errors.IsNotFound(err) {
 		reqLogger.Info("Aqua Starboard: Creating a New ClusterRole", "ClusterRole.Namespace", crole.Namespace, "ClusterRole.Name", crole.Name)
 		err = r.client.Create(context.TODO(), crole)
@@ -245,7 +245,13 @@ func (r *ReconcileAquaStarboard) addStarboardClusterRole(cr *v1alpha1.AquaStarbo
 	}
 
 	// Check if the ClusterRole Rules, matches the found Rules
-	if !equality.Semantic.DeepDerivative(crole.Rules, found.Rules) {
+	equal, err := k8s.CompareByHash(crole.Rules, found.Rules)
+
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	if !equal {
 		found = crole
 		log.Info("Aqua Starboard: Updating ClusterRole", "ClusterRole.Namespace", found.Namespace, "ClusterRole.Name", found.Name)
 		err := r.client.Update(context.TODO(), found)

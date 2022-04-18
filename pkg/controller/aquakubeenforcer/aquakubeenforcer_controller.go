@@ -7,6 +7,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
+	json2 "encoding/json"
 	"encoding/pem"
 	syserrors "errors"
 	"fmt"
@@ -461,7 +462,11 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerClusterRole(cr *operatorv1alp
 
 	// Check if this ClusterRole already exists
 	found := &rbacv1.ClusterRole{}
-	err := r.client.Get(context.TODO(), types.NamespacedName{Name: crole.Name, Namespace: crole.Namespace}, found)
+	err := r.client.Get(context.TODO(), types.NamespacedName{Name: crole.Name}, found)
+	json1, _ := json2.Marshal(crole)
+	json2, _ := json2.Marshal(found)
+	fmt.Printf("crole: %v", json1)
+	fmt.Printf("found: %v", json2)
 	if err != nil && errors.IsNotFound(err) {
 		reqLogger.Info("Aqua KubeEnforcer: Creating a New ClusterRole", "ClusterRole.Namespace", crole.Namespace, "ClusterRole.Name", crole.Name)
 		err = r.client.Create(context.TODO(), crole)
@@ -475,7 +480,13 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerClusterRole(cr *operatorv1alp
 	}
 
 	// Check if the ClusterRole Rules, matches the found Rules
-	if !equality.Semantic.DeepDerivative(crole.Rules, found.Rules) {
+	equal, err := k8s.CompareByHash(crole.Rules, found.Rules)
+
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	if !equal {
 		found = crole
 		log.Info("Aqua KubeEnforcer: Updating ClusterRole", "ClusterRole.Namespace", found.Namespace, "ClusterRole.Name", found.Name)
 		err := r.client.Update(context.TODO(), found)
@@ -594,7 +605,13 @@ func (r *ReconcileAquaKubeEnforcer) addKubeEnforcerRole(cr *operatorv1alpha1.Aqu
 	}
 
 	// Check if the Role Rules, matches the found Rules
-	if !equality.Semantic.DeepDerivative(role.Rules, found.Rules) {
+	equal, err := k8s.CompareByHash(role.Rules, found.Rules)
+
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	if !equal {
 		found = role
 		log.Info("Aqua KubeEnforcer: Updating Role", "Role.Namespace", found.Namespace, "Role.Name", found.Name)
 		err := r.client.Update(context.TODO(), found)
