@@ -18,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"os"
 	"os/exec"
+	"regexp"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -46,7 +47,7 @@ func CreatePullingSecret(namespace string) *corev1.Secret {
 	base64Password := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password)))
 	dockerCfg := map[string]map[string]map[string]string{"auths": {"registry.aquasec.com": {"username": username, "password": password, "auth": base64Password}}}
 
-	json, _ := json.Marshal(dockerCfg)
+	j, _ := json.Marshal(dockerCfg)
 
 	return &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -54,7 +55,7 @@ func CreatePullingSecret(namespace string) *corev1.Secret {
 			Namespace: namespace,
 		},
 		Type: "kubernetes.io/dockerconfigjson",
-		Data: map[string][]byte{".dockerconfigjson": json},
+		Data: map[string][]byte{".dockerconfigjson": j},
 	}
 
 }
@@ -317,7 +318,7 @@ func CreateStorageClass() *storagev1.StorageClass {
 	deletePolicy := corev1.PersistentVolumeReclaimDelete
 	return &storagev1.StorageClass{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "torage.k8s.io/v1",
+			APIVersion: "storage.k8s.io/v1",
 			Kind:       "StorageClass",
 		},
 		ObjectMeta: metav1.ObjectMeta{
@@ -413,6 +414,101 @@ func KindClusterOperations(operation string) error {
 	return nil
 }
 
+func CrcClusterOperations(operation string) error {
+
+	var err error
+
+	log := logf.Log.WithName("CrcClusterOperations")
+	log.Info(fmt.Sprintf("Going to %s Crc cluster", operation))
+	if operation == "create" {
+		pullSecret := os.Getenv("PULL_SECRET")
+		if pullSecret != "" {
+			var out []byte
+			var userHomeDir string
+
+			log.Info("Running with Crc")
+			err = CreateFile(pullSecret, "pull-secret.txt")
+			if err != nil {
+				return err
+			}
+			os.Setenv("USE_EXISTING_CLUSTER", "true")
+			out, err = exec.Command("bash", "-c", "PATH=~:/usr/local/bin/:$PATH crc setup").Output()
+			if err != nil {
+				return fmt.Errorf(fmt.Sprintf("Failed to run crc setup, command output: %s", string(out)), err)
+			}
+			out, err = exec.Command("bash", "-c", "PATH=~:/usr/local/bin/:$PATH crc start --pull-secret-file pull-secret.txt").Output()
+			if err != nil {
+				return fmt.Errorf(fmt.Sprintf("Failed to run crc start, command output: %s", string(out)), err)
+			}
+			userHomeDir, err = GetUserHomeDir()
+			if err != nil {
+				return err
+			}
+			err = UpdateKubeConfigCurrentContext("crc-admin", fmt.Sprintf("%s/.kube/config", userHomeDir))
+			if err != nil {
+				return err
+			}
+
+		} else {
+			return fmt.Errorf("PULL_SECRET env is missing")
+		}
+
+	} else if operation == "delete" {
+		_, err = exec.Command("bash", "-c", "PATH=~:/usr/local/bin/:$PATH crc delete").Output()
+	}
+	if err != nil {
+		log.Error(err, fmt.Sprintf("Failed to %s Crc cluster", operation))
+		return err
+	}
+
+	return nil
+}
+
+func GetUserHomeDir() (string, error) {
+	log := logf.Log.WithName("getUserHomeDir")
+
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf(fmt.Sprintf("failed to get user home dir"), err)
+	}
+	log.Info(fmt.Sprintf("User home dir: %s", dirname))
+	return dirname, nil
+}
+func UpdateKubeConfigCurrentContext(context, kubeconfig string) error {
+	log := logf.Log.WithName("UpdateKubeConfigCurrentContext")
+	log.Info(fmt.Sprintf("Starting to update kubeconfig: %s to context: %s", kubeconfig, context))
+	var (
+		err         error
+		fileContent []byte
+		file        *os.File
+	)
+	fileContent, err = os.ReadFile(kubeconfig)
+	if err != nil {
+		return fmt.Errorf(fmt.Sprintf("Failed to read the kubeconfig file: %s", kubeconfig), err)
+	}
+
+	// Replacing all the strings
+	// Using ReplaceAllString() method
+	m := regexp.MustCompile("current-context: \"\"")
+	res := m.ReplaceAllString(string(fileContent), fmt.Sprintf("current-context: \"%s\"", context))
+	log.Info(fmt.Sprintf("Kubeconfig updated content: %s", res))
+	file, err = os.Create(kubeconfig)
+
+	if err != nil {
+		return fmt.Errorf(fmt.Sprintf("Failed to Create kubeconfig file: %s", kubeconfig), err)
+	}
+
+	defer file.Close()
+
+	_, err = file.WriteString(res)
+
+	if err != nil {
+		return fmt.Errorf(fmt.Sprintf("Failed to update kubeconfig file: %s", kubeconfig), err)
+	}
+	log.Info(fmt.Sprintf("Finished to update kubeconfig: %s to context: %s", kubeconfig, context))
+	return nil
+}
+
 func AddUserToCluster(testEnv envtest.Environment) {
 	user, err := testEnv.AddUser(
 		envtest.User{
@@ -502,3 +598,19 @@ func CreateStorageClassIfNotExist() {
 //	_, err = exec.Command("bash", "-c", "PATH=~:/usr/local/bin/:$PATH && kind delete cluster").Output()
 //	"kubectl get pods -n ${namespace} -l app.kubernetes.io/instance=aqua-${chart} -o jsonpath='{.items[*].status.containerStatuses[0].ready}'"
 //}
+func CreateFile(data, location string) error {
+	log := logf.Log.WithName("CreateFile")
+	log.Info(fmt.Sprintf("Going to create file name: %s", location))
+	f, err := os.Create(location)
+
+	if err != nil {
+		return fmt.Errorf(fmt.Sprintf("Failed to create file: %s", location), err)
+	}
+	defer f.Close()
+	_, err2 := f.WriteString(data)
+	if err2 != nil {
+		return fmt.Errorf(fmt.Sprintf("Failed to write data to  file: %s", location), err)
+	}
+	log.Info(fmt.Sprintf("Finished to create file name: %s with success", location))
+	return nil
+}

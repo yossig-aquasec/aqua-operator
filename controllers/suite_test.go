@@ -87,14 +87,25 @@ var _ = BeforeSuite(func() {
 	if createKind == "true" {
 		log.Info("Running with Kind")
 		os.Setenv("USE_EXISTING_CLUSTER", "true")
-		testutils.KindClusterOperations("create")
+		err := testutils.KindClusterOperations("create")
+		if err != nil {
+			Expect(err).ToNot(HaveOccurred())
+		}
+	}
+	createCrc := os.Getenv("CREATE_CRC")
+	if createCrc == "true" {
+		log.Info("Running with Crc")
+		os.Setenv("USE_EXISTING_CLUSTER", "true")
+		//err := testutils.CrcClusterOperations("create")
+		//if err != nil {
+		//	Expect(err).ToNot(HaveOccurred())
+		//}
 	}
 
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
 	}
-
 	cfg, err := testEnv.Start()
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
@@ -110,7 +121,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(k8sClient).NotTo(BeNil())
 
-	PrepareEnv()
+	PrepareEnv(createCrc == "true")
 	// Start controllers
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme: scheme.Scheme,
@@ -174,22 +185,30 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 	By("tearing down the test environment")
-	CleanEnv()
 	createKind := os.Getenv("CREATE_KIND")
+	createCrc := os.Getenv("CREATE_CRC")
+	CleanEnv(createCrc == "true")
+
 	if createKind == "true" {
 		testutils.KindClusterOperations("delete")
 	}
+	//if createCrc == "true" {
+	//	testutils.CrcClusterOperations("delete")
+	//}
 })
 
-func CleanEnv() {
-	//delete storage
-	//Expect(k8sClient.Delete(context.TODO(), test_utils.CreateServiceAccount())).Should(Succeed())
-	//Expect(k8sClient.Delete(context.TODO(), test_utils.CreateClusterRole())).Should(Succeed())
-	//Expect(k8sClient.Delete(context.TODO(), test_utils.CreateClusterRoleBinding())).Should(Succeed())
-	//Expect(k8sClient.Delete(context.TODO(), test_utils.CreateRole())).Should(Succeed())
-	//Expect(k8sClient.Delete(context.TODO(), test_utils.CreateRoleBinding())).Should(Succeed())
-	//Expect(k8sClient.Delete(context.TODO(), test_utils.CreateHostPathProvisionerDeployment())).Should(Succeed())
-	//Expect(k8sClient.Delete(context.TODO(), test_utils.CreateStorageClass())).Should(Succeed())
+func CleanEnv(deleteStorageClass bool) {
+	if deleteStorageClass {
+		//delete storage
+		Expect(k8sClient.Delete(context.TODO(), testutils.CreateServiceAccount())).Should(Succeed())
+		Expect(k8sClient.Delete(context.TODO(), testutils.CreateClusterRole())).Should(Succeed())
+		Expect(k8sClient.Delete(context.TODO(), testutils.CreateClusterRoleBinding())).Should(Succeed())
+		Expect(k8sClient.Delete(context.TODO(), testutils.CreateRole())).Should(Succeed())
+		Expect(k8sClient.Delete(context.TODO(), testutils.CreateRoleBinding())).Should(Succeed())
+		Expect(k8sClient.Delete(context.TODO(), testutils.CreateHostPathProvisionerDeployment())).Should(Succeed())
+		Expect(k8sClient.Delete(context.TODO(), testutils.CreateStorageClass())).Should(Succeed())
+	}
+
 	//delete namespaces
 	Expect(k8sClient.Delete(context.TODO(), testutils.CreateNamespace(testingconsts.Namespace))).Should(Succeed())
 	//Expect(k8sClient.Delete(context.TODO(), test_utils.CreateNamespace("local-storage"))).Should(Succeed())
@@ -197,20 +216,23 @@ func CleanEnv() {
 	Expect(err).NotTo(HaveOccurred())
 }
 
-func PrepareEnv() {
+func PrepareEnv(createStorageClass bool) {
 	//create namespace
 	Expect(k8sClient.Create(context.TODO(), testutils.CreateNamespace(testingconsts.Namespace))).Should(Succeed())
 	// create secrets
 	Expect(k8sClient.Create(context.TODO(), testutils.CreateAquaDatabasePassword(testingconsts.Namespace))).Should(Succeed())
 	Expect(k8sClient.Create(context.TODO(), testutils.CreatePullingSecret(testingconsts.Namespace))).Should(Succeed())
 
-	//create storage class
-	//Expect(k8sClient.Create(context.TODO(), testutils.CreateNamespace("local-storage"))).Should(Succeed())
-	//Expect(k8sClient.Create(context.TODO(), testutils.CreateServiceAccount())).Should(Succeed())
-	//Expect(k8sClient.Create(context.TODO(), testutils.CreateClusterRole())).Should(Succeed())
-	//Expect(k8sClient.Create(context.TODO(), testutils.CreateClusterRoleBinding())).Should(Succeed())
-	//Expect(k8sClient.Create(context.TODO(), testutils.CreateRole())).Should(Succeed())
-	//Expect(k8sClient.Create(context.TODO(), testutils.CreateRoleBinding())).Should(Succeed())
-	//Expect(k8sClient.Create(context.TODO(), testutils.CreateHostPathProvisionerDeployment())).Should(Succeed())
-	//Expect(k8sClient.Create(context.TODO(), testutils.CreateStorageClass())).Should(Succeed())
+	if createStorageClass {
+		//create storage class
+
+		Expect(k8sClient.Create(context.TODO(), testutils.CreateNamespace("local-storage"))).Should(Succeed())
+		Expect(k8sClient.Create(context.TODO(), testutils.CreateServiceAccount())).Should(Succeed())
+		Expect(k8sClient.Create(context.TODO(), testutils.CreateClusterRole())).Should(Succeed())
+		Expect(k8sClient.Create(context.TODO(), testutils.CreateClusterRoleBinding())).Should(Succeed())
+		Expect(k8sClient.Create(context.TODO(), testutils.CreateRole())).Should(Succeed())
+		Expect(k8sClient.Create(context.TODO(), testutils.CreateRoleBinding())).Should(Succeed())
+		Expect(k8sClient.Create(context.TODO(), testutils.CreateHostPathProvisionerDeployment())).Should(Succeed())
+		Expect(k8sClient.Create(context.TODO(), testutils.CreateStorageClass())).Should(Succeed())
+	}
 }
